@@ -35,24 +35,47 @@
                         <h5 class="card-title">{{this.title}}</h5>
                         <p class="card-text">{{this.description}}</p>
                         <p class="card-text">${{this.price}}</p>
-                        <p class="card-text">ID: {{this._id}}</p>
+                        <p class="card-text pid" data-pid="{{this._id}}">ID: {{this._id}}</p>
                         <p class="card-text">Categoria: {{this.category}}</p>
-                        <p class="card-text">Stock: {{this.stock}}</p>
-                        <a href="http://localhost:8080/api/products/{{this._id}}"><button type="button"
-                                class="btn btn-primary">Ver más</button></a>
+                        <p class="card-text stock" data-stock="{{this.stock}}">Stock: {{this.stock}}</p>
 
-                        {{!-- <form
-                            action="http://localhost:8080/api/carts/648654bd423a51a741ff13ce/products/{{this._id}}"
-                            method="post">
-                            <input type="submit" class="btn btn-dark" value="Agregar al carrito">
-                        </form> --}}
 
-                        <form action="/api/carts/{{../user._id}}/cart" method="post">
-                            <input type="hidden" name="productId" value="{{this._id}}">
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="btn btn-dark" onclick="addProductAlert()">Añadir al carrito</button>
-                        </form>
+                        <div class="container">
 
+                            <div class="row align-items-center">
+
+                                <div class="col d-flex justify-content-center">
+                                    <div class="d-flex flex-column justify-content-center align-items-center">
+                                        <a href="http://localhost:8080/api/products/{{this._id}}">
+                                            <button type="button" class="btn btn-primary">Ver más</button>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="counter d-flex justify-content-center align-items-center">
+                                        <button class="decrementButton btn btn-counter">-</button>
+                                        <p class="counterDisplay mx-3" data-counter="1">1</p>
+                                        <button class="incrementButton btn btn-counter">+</button>
+                                    </div>
+                                </div>
+
+                                <div class="col d-flex justify-content-center">
+                                    <div class="d-flex flex-column justify-content-center align-items-center">
+                                        <form action="/api/carts/{{../user._id}}/cart" method="post">
+                                            <input type="hidden" name="productId" value="{{this._id}}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-dark"
+                                                onclick="addProductAlert()">Añadir al
+                                                carrito</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,6 +115,80 @@
     </div>
 </section>
 
-<script src="/js/products.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/products.js"></script>
+
+<script>
+
+    document.querySelectorAll('.counter').forEach(function (counterContainer) {
+        let counterDisplay = counterContainer.querySelector('.counterDisplay');
+        let incrementButton = counterContainer.querySelector('.incrementButton');
+        let decrementButton = counterContainer.querySelector('.decrementButton');
+        let addToCartButton = counterContainer.closest('.card-body').querySelector('form button[type=submit]');
+
+
+        decrementButton.disabled = true;
+
+        let counter = parseInt(counterDisplay.getAttribute('data-counter'));
+        let stockElement = counterContainer.closest('.card-body').querySelector('.stock');
+        let limit = parseInt(stockElement.getAttribute('data-stock'));
+
+        let originalLimit = limit;  //fix logic error :D
+
+        incrementButton.addEventListener('click', function () {
+            if (counter < originalLimit) {
+                counter++;
+                limit--;
+
+                if (counter == originalLimit) {
+                    incrementButton.disabled = true;
+
+                }
+                if (counter > 0) {
+                    decrementButton.disabled = false;
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'El contador ha alcanzado su límite máximo de stock ' + originalLimit,
+                })
+            }
+            counterDisplay.textContent = counter;
+            counterDisplay.setAttribute('data-counter', counter);
+        });
+
+        decrementButton.addEventListener('click', function () {
+            if (counter > 1) {
+                counter--;
+                limit++;
+
+                if (incrementButton.disabled == true) { // If the incrementButton is disabled
+                    incrementButton.disabled = false; // enable the button
+                }
+                if (counter == 1) {
+                    decrementButton.disabled = true; // disable the decrement button
+                }
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'El contador ya está en su límite mínimo de stock 1',
+                })
+            }
+            counterDisplay.textContent = counter;
+            counterDisplay.setAttribute('data-counter', counter);
+        });
+
+        addToCartButton.addEventListener('click', function () {
+
+            let quantityInput = counterContainer.closest('.card-body').querySelector('form input[name=quantity]');
+            quantityInput.value = counter;
+
+        });
+
+    });
+
+
+</script>

@@ -54,7 +54,9 @@ router.post('/:userId/cart', async (req, res) => {
     const populatedUser = await userService.populateProductCart(userId);
 
     // Respond with the populated user.
-    res.status(200).json(populatedUser);
+    res.status(200)
+      //.json(populatedUser);
+
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

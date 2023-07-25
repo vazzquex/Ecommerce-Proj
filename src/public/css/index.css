@@ -19,3 +19,38 @@ input, textarea, button{
     background-color: #ff3232;
     padding: 16px;
 }
+
+
+
+
+
+/* Botones para agregar al carrito en cantidad */
+.counter {
+    font-size: 1.4em;
+    margin: 20px;
+}
+
+.btn-counter {
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; 
+    font-size: 1.2em;
+    margin: 0 10px;
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    transition: 0.3s;
+}
+
+.btn-counter:hover {
+    background-color: #0056b3; 
+}
+
+.counterDisplay {
+    margin: 0 20px;
+}
+
+
