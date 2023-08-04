@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import cartController from "../controllers/cart.controller.js";
 import userService from "../services/user.service.js";
+import userModel from "../dao/models/user.model.js";
 
 const router = Router();
 
@@ -40,7 +41,7 @@ router.post('/:userId/cart', async (req, res) => {
   const { productId, quantity } = req.body;
 
   try {
-    const user = await userService.getById(userId);
+    let user = await userService.getById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -51,11 +52,14 @@ router.post('/:userId/cart', async (req, res) => {
 
     await userService.updateUser(user);
 
+    user = await userModel.findById(userId).populate('cart.productId');
+
+
     const populatedUser = await userService.populateProductCart(userId);
 
     // Respond with the populated user.
     res.status(200)
-      //.json(populatedUser);
+    //.json(populatedUser);
 
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -84,24 +88,24 @@ router.post('/:userId/:productId', async (req, res) => {
   const { userId, productId } = req.params;
 
   try {
-      const user = await userService.getById(userId);
+    const user = await userService.getById(userId);
 
-      // Filtra los productos en el carrito para excluir el producto que deseas eliminar
-      user.cart = user.cart.filter(item => item.productId.toString() !== productId);
+    // Filtra los productos en el carrito para excluir el producto que deseas eliminar
+    user.cart = user.cart.filter(item => item.productId.toString() !== productId);
 
-      // save user
-      await user.save();
+    // save user
+    await user.save();
 
-      const populateUser = await userService.populateProductCart(userId);
+    const populateUser = await userService.populateProductCart(userId);
 
-      res.status(200).json(populateUser)
+    res.status(200).json(populateUser)
 
-      //res.status(204).end();
+    //res.status(204).end();
 
 
   } catch (error) {
-      console.error(`Error removing product from cart: ${error}`);
-      res.status(500).send(`Internal server error removing product from cart: ${error}`);
+    console.error(`Error removing product from cart: ${error}`);
+    res.status(500).send(`Internal server error removing product from cart: ${error}`);
   }
 });
 

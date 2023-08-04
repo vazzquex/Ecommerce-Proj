@@ -5,7 +5,7 @@ class ProductController {
 
   // Read
   getProducts = async (limit, page, sort, query) => {
-    let formatLimit = limit ? Number(limit) : 2;
+    let formatLimit = limit ? Number(limit) : 4;
     let formatPage = page ? Number(page) : 1;
     let formatQuery = query ? { category: query } : {};
     
@@ -40,20 +40,22 @@ class ProductController {
 
     const title = product.title.trim();
     const description = product.description.trim();
-    const code = product.code.trim();
+    //const code = product.code.trim();
     const price = Number(product.price);
     const category = product.category.trim();
     const status = product.status ?? true;
     const stock = Number(product.stock);
+    const thumbnail = product.thumbnail;
 
     const formattedProduct = {
       title: title,
       description: description,
-      code: code,
+      //code: code,
       price: price,
       category: category,
       status: status,
       stock: stock,
+      thumbnail: thumbnail,
     };
 
     try{

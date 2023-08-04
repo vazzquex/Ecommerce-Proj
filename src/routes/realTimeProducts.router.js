@@ -1,16 +1,17 @@
 import { Router } from 'express';
 const router = Router();
 import productController from '../controllers/product.controller.js';
+import { isAdmin } from '../middleware/auth.middleware.js';
 
 const realTimeProductsRouter = (socketServer) => {
 
     socketServer.on('connection', async (socket) => {
         //console.log(`New connection: ${socket.id}`);
         // Load products
-        try{
+        try {
             const products = await productController.getProducts();
             await socketServer.emit('products', products);
-        } catch (error){
+        } catch (error) {
             console.error(`Error has been ocurred trying to load the products: ${error}`);
         };
 
@@ -27,7 +28,7 @@ const realTimeProductsRouter = (socketServer) => {
 
         // Delete Product 
         socket.on('deleteProduct', async (productToDelete) => {
-            try{
+            try {
                 await productController.deleteProduct(productToDelete);
                 const products = await productController.getProducts();
                 await socketServer.emit('products', products);
@@ -38,13 +39,17 @@ const realTimeProductsRouter = (socketServer) => {
     });
 
     // Render view
-    router.get('/', (req, res) => {
+    router.get('/', isAdmin, (req, res) => {
+
         res.status(200).render('realTimeProducts', {
             script: 'realTimeProducts',
             style: 'index',
-            title: 'Productos en tiempo real'
+            title: 'Productos en tiempo real',
+            
         });
+
     });
+
 
     return router;
 };

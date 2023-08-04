@@ -1,5 +1,6 @@
 import { Router } from "express";
 import messagesController from "../controllers/message.controller.js";
+import userService from "../services/user.service.js";
 
 const router = Router();
 
@@ -29,10 +30,13 @@ const chatMessagesRouter = (socketServer) => {
   });
 
   router.get("/", async (req, res) => {
+    const user = req.user;
+
     res.status(200).render('chat', {
       script: 'chat',
       style: 'chat',
-      title: 'coder chat'
+      title: 'coder chat',
+      user
     });
   });
 

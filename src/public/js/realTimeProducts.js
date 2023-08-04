@@ -9,6 +9,7 @@ const descripInput = document.getElementById('descripInput');
 const statusInput = document.getElementById('statusInput');
 const codeInput = document.getElementById('codeInput');
 const categoryInput = document.getElementById('categoryInput');
+const thumbnailInput = document.getElementById('thumbnailInput');
 
 form.addEventListener('submit', (data) => {
     data.preventDefault();
@@ -21,6 +22,7 @@ form.addEventListener('submit', (data) => {
         category: categoryInput.value,
         status: statusInput.checked, 
         stock: stockInput.value,
+        thumbnail: thumbnailInput.value,
     };
 
     socket.emit('newProduct', newProduct);

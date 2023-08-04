@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
 		default: "user"
 	},
 	cart: [{
-		productId: { type: mongoose.Schema.Types.ObjectId, ref: 'products' },
+		productId: { type: mongoose.Schema.Types.ObjectId, 
+		ref: 'products' },
 		quantity: Number
 	}],
 	password: String,

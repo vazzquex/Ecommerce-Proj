@@ -6,7 +6,7 @@ const router = Router();
 // Get
 router.get('/', async (req, res) => {
   try {
-    const {limit, page, sort, query} = req.query;
+    const { limit, page, sort, query } = req.query;
 
     const products = await productController.getProducts(limit, page, sort, query);
     res.status(200).send(products);
@@ -26,26 +26,27 @@ router.get("/:pid", async (req, res) => {
     delete user.password;
 
     res.status(200).render('product', {
-        style: 'index',
-        title: `${product.title}`,
-        product,
-        user
-    
+      script: 'products',
+      style: 'product',
+      title: `${product.title}`,
+      product,
+      user
+
     });
 
-} catch (error) {
+  } catch (error) {
     res.status(500).send(`Error trying to fetch product by id: ${error}`);
-};
+  };
 });
 
 
 // Create
 router.post("/", async (req, res) => {
-  if(!req.body) return;
+  if (!req.body) return;
 
   try {
     const currentProduct = await productController.addProduct(req.body);
-    res.status(201).send({currentProduct});
+    res.status(201).send({ currentProduct });
   } catch (error) {
     res.status(500).send(`Error trying to create a product: ${error}`);
   };
@@ -54,12 +55,12 @@ router.post("/", async (req, res) => {
 
 // Update 
 router.put("/:pid", async (req, res) => {
-  if(!req.body) return;
+  if (!req.body) return;
 
   const pid = req.params.pid;
   try {
     const currentProduct = await productController.updateProduct(pid, req.body);
-    res.status(201).send({currentProduct});
+    res.status(201).send({ currentProduct });
   } catch (error) {
     res.status(500).send(`Error trying to create a product: ${error}`);
   };

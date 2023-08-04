@@ -2,6 +2,8 @@ body{
     background-color: rgb(202, 206, 212);
 }
 
+
+
 #products-container{
     display: grid;
     grid-template-columns: repeat(2, 1fr);

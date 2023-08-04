@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { isAuth, isGuest } from '../middleware/auth.middleware.js';
+import { filterCurrent } from '../middleware/current.middleware.js';
+
 
 const sessionsRouter = Router();
 
-sessionsRouter.get('/current', (req, res) => {
+sessionsRouter.get('/current', filterCurrent, (req, res) => {
 	if(req.session.user){
 		res.json(req.session.user);
 	} else {

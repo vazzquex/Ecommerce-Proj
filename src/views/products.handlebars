@@ -4,83 +4,103 @@
 
     <haeder>
 
-        <h4>Ordenar por:</h4>
-        <ul>
-            <li><a id="linkDesc" href="">Mayor precio</a></li>
-            <li><a id="linkAsc" href="">Menor precio</a></li>
-        </ul>
-
-        <h4>Categorias:</h4>
-        <ul>
-            <li><a id="CPU" href="">Procesadores</a></li>
-            <li><a id="GPU" href="">Graficas</a></li>
-            <li><a id="todo" href="">Todo</a></li>
-        </ul>
-
-        <form action="/carts/{{user._id}}" method="post">
-            <input type="hidden" name="productId" value="{{this._id}}">
-            <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="btn btn-primary">Ir al carrito</button>
-        </form>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css" rel="stylesheet">
 
 
-    </haeder>
+        <div class="container my-4">
 
-    <div id="products-container">
-        {{#each products.docs}}
-        <div class="card mb-3">
-            <div class="row g-0">
-                <div class="col-md-10">
-                    <div class="card-body">
-                        <h5 class="card-title">{{this.title}}</h5>
-                        <p class="card-text">{{this.description}}</p>
-                        <p class="card-text">${{this.price}}</p>
-                        <p class="card-text pid" data-pid="{{this._id}}">ID: {{this._id}}</p>
-                        <p class="card-text">Categoria: {{this.category}}</p>
-                        <p class="card-text stock" data-stock="{{this.stock}}">Stock: {{this.stock}}</p>
+            <button class="btn btn-outline-primary mb-3" type="button" data-toggle="collapse" data-target="#filters"
+                aria-expanded="false" aria-controls="filters">
+                <i class="bi bi-filter-right"></i>
+                <i class="fa fa-chevron-down"></i> Filtros
+            </button>
 
+            <div class="collapse" id="filters">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Ordenar por:</h4>
+                        <div class="list-group">
+                            <a href="#" id="linkDesc" class="list-group-item list-group-item-action custom-border">Mayor
+                                precio</a>
+                            <a href="#" id="linkAsc" class="list-group-item list-group-item-action custom-border">Menor
+                                precio</a>
+                        </div>
+                    </div>
 
-                        <div class="container">
-
-                            <div class="row align-items-center">
-
-                                <div class="col d-flex justify-content-center">
-                                    <div class="d-flex flex-column justify-content-center align-items-center">
-                                        <a href="http://localhost:8080/api/products/{{this._id}}">
-                                            <button type="button" class="btn btn-primary">Ver más</button>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="col">
-                                    <div class="counter d-flex justify-content-center align-items-center">
-                                        <button class="decrementButton btn btn-counter">-</button>
-                                        <p class="counterDisplay mx-3" data-counter="1">1</p>
-                                        <button class="incrementButton btn btn-counter">+</button>
-                                    </div>
-                                </div>
-
-                                <div class="col d-flex justify-content-center">
-                                    <div class="d-flex flex-column justify-content-center align-items-center">
-                                        <form action="/api/carts/{{../user._id}}/cart" method="post">
-                                            <input type="hidden" name="productId" value="{{this._id}}">
-                                            <input type="hidden" name="quantity" value="1">
-                                            <button type="submit" class="btn btn-dark"
-                                                onclick="addProductAlert()">Añadir al
-                                                carrito</button>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Categorias:</h4>
+                        <div class="list-group">
+                            <a href="#" id="CPU"
+                                class="list-group-item list-group-item-action custom-border">Procesadores</a>
+                            <a href="#" id="GPU"
+                                class="list-group-item list-group-item-action custom-border">Gráficas</a>
+                            <a href="#" id="todo" class="list-group-item list-group-item-action custom-border">Todo</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {{/each}}
+
+
+
+
+    </haeder>
+
+    <div id="products-container">
+
+        <div class="row flex-row">
+
+            {{#each products.docs}}
+            <div class="col-md-3">
+                <div class="card mb-3" id="product-{{this._id}}">
+                    <div class="row g-0">
+
+                        <div>
+                            <div class="image-container">
+
+                                {{#if this.thumbnail}}
+                                <div class="image-product img-fluid img"
+                                    style="background-image: url({{this.thumbnail}})"></div>
+                                {{else}}
+                                <div class="image-product img-fluid img"
+                                    style="background-image: url('https://camarasal.com/wp-content/uploads/2020/08/default-image-5-1.jpg')">
+                                </div>
+                                {{/if}}
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <div class="card-body">
+
+                                <h2 class="card-text">${{this.price}}</h2>
+
+                                <h5 class="card-title">{{this.title}}</h5>
+                                <p class="card-text">{{this.description}}</p>
+                                <p class="card-text pid" data-pid="{{this._id}}">ID: {{this._id}}</p>
+                                <p class="card-text">Categoria: {{this.category}}</p>
+
+                                {{#if this.stock}}
+                                <p class="card-text stock" data-stock="{{this.stock}}">Stock: {{this.stock}}</p>
+                                {{else}}
+                                <p class="card-text stock" data-stock="{{this.stock}}">Stock: {{this.stock}}</p>
+                                <p style="color: red;"> No hay Stock</p>
+                                {{/if}}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            {{/each}}
+
+        </div>
+
+
+
 
 
         <ul class="pagination">
@@ -119,76 +139,17 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/products.js"></script>
 
-<script>
-
-    document.querySelectorAll('.counter').forEach(function (counterContainer) {
-        let counterDisplay = counterContainer.querySelector('.counterDisplay');
-        let incrementButton = counterContainer.querySelector('.incrementButton');
-        let decrementButton = counterContainer.querySelector('.decrementButton');
-        let addToCartButton = counterContainer.closest('.card-body').querySelector('form button[type=submit]');
-
-
-        decrementButton.disabled = true;
-
-        let counter = parseInt(counterDisplay.getAttribute('data-counter'));
-        let stockElement = counterContainer.closest('.card-body').querySelector('.stock');
-        let limit = parseInt(stockElement.getAttribute('data-stock'));
-
-        let originalLimit = limit;  //fix logic error :D
-
-        incrementButton.addEventListener('click', function () {
-            if (counter < originalLimit) {
-                counter++;
-                limit--;
-
-                if (counter == originalLimit) {
-                    incrementButton.disabled = true;
-
-                }
-                if (counter > 0) {
-                    decrementButton.disabled = false;
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'El contador ha alcanzado su límite máximo de stock ' + originalLimit,
-                })
-            }
-            counterDisplay.textContent = counter;
-            counterDisplay.setAttribute('data-counter', counter);
-        });
-
-        decrementButton.addEventListener('click', function () {
-            if (counter > 1) {
-                counter--;
-                limit++;
-
-                if (incrementButton.disabled == true) { // If the incrementButton is disabled
-                    incrementButton.disabled = false; // enable the button
-                }
-                if (counter == 1) {
-                    decrementButton.disabled = true; // disable the decrement button
-                }
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'El contador ya está en su límite mínimo de stock 1',
-                })
-            }
-            counterDisplay.textContent = counter;
-            counterDisplay.setAttribute('data-counter', counter);
-        });
-
-        addToCartButton.addEventListener('click', function () {
-
-            let quantityInput = counterContainer.closest('.card-body').querySelector('form input[name=quantity]');
-            quantityInput.value = counter;
-
-        });
-
-    });
-
-
+<script type="text/javascript">
+    document.querySelectorAll('.card.mb-3').forEach(item => {
+        item.addEventListener('click', event => {
+            // Extrae el id del producto desde el id del elemento
+            const productId = event.currentTarget.id.split('-')[1];
+            window.location.href = `http://localhost:8080/products/${productId}`;
+        })
+    })
 </script>
+
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
