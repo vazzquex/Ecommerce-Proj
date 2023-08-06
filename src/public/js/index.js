@@ -17,6 +17,17 @@ linkAsc.addEventListener('click', () => {
     linkAsc.href = url.href;
 });
 
+const relevant = document.getElementById('relevant');
+relevant.addEventListener('click', () => {
+    let url = new URL(window.location.href);
+    url.searchParams.delete('page');
+    url.searchParams.set('page', '1');
+    url.searchParams.delete('sort');
+    url.searchParams.set('sort', '');
+    relevant.href = url.href;
+});
+
+
 const CPU = document.getElementById('CPU');
 CPU.addEventListener('click', () => {
     let url = new URL(window.location.href);

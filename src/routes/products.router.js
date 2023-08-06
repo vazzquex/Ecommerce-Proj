@@ -1,6 +1,11 @@
 import { Router } from 'express';
 import productController from '../controllers/product.controller.js';
 
+// custom errors
+import CustomErrors from '../tools/CustomErrors.js';
+import EErrors from '../tools/EErrors.js';
+import { ProductErrorInfo } from '../tools/EErrorInfo.js';
+
 const router = Router();
 
 // Get
@@ -35,7 +40,15 @@ router.get("/:pid", async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).send(`Error trying to fetch product by id: ${error}`);
+
+    CustomErrors.createError(
+      "error creating products",
+      ProductErrorInfo(error),
+      "error creating products",
+      EErrors.PRODUCT_ERROR
+    );
+
+    //res.status(500).send(`Error trying to fetch product by id: ${error}`);
   };
 });
 
@@ -74,7 +87,11 @@ router.delete("/:pid", async (req, res) => {
     const deteledProduct = await productController.deleteProduct(pid);
     res.status(200).send(deteledProduct);
   } catch (error) {
+
+
     res.status(500).send(`Error trying to create a product: ${error}`);
+
+
   };
 });
 

@@ -7,7 +7,7 @@ const priceInput = document.getElementById('priceInput');
 const stockInput = document.getElementById('stockInput');
 const descripInput = document.getElementById('descripInput');
 const statusInput = document.getElementById('statusInput');
-const codeInput = document.getElementById('codeInput');
+//const codeInput = document.getElementById('codeInput');
 const categoryInput = document.getElementById('categoryInput');
 const thumbnailInput = document.getElementById('thumbnailInput');
 
@@ -17,7 +17,7 @@ form.addEventListener('submit', (data) => {
     const newProduct = {
         title: titleInput.value,
         description: descripInput.value,
-        code: codeInput.value,
+        //code: codeInput.value,
         price: priceInput.value,
         category: categoryInput.value,
         status: statusInput.checked, 

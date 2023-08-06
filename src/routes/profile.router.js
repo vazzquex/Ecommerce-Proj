@@ -3,17 +3,31 @@ import { isAuth, isGuest } from '../middleware/auth.middleware.js';
 
 import productController from '../controllers/product.controller.js';
 
+//custom erros
+import EErrors from '../tools/EErrors.js';
+import CustomErrors from '../tools/CustomErrors.js';
+import { ProductErrorInfo, DatabaseErrorInfo } from '../tools/EErrorInfo.js';
+
 
 const profileRouters = Router();
 
 profileRouters.get('/', isAuth, (req, res) => {
-    const { user } = req.session;
-    delete user.password;
+    try {
+        const { user } = req.session;
+        delete user.password;
 
-    res.render('index', {
-        title: 'Perfil de Usuario',
-        user
-    });
+        res.render('index', {
+            title: 'Perfil de Usuario',
+            user
+        });
+    } catch {
+        CustomErrors.createError(
+            "error accessing route",
+            UserErrorInfo(req.session.user),
+            "error accessing route",
+            EErrors.ROUTING_ERROR
+        );
+    }
 });
 
 profileRouters.get('/register', isGuest, (req, res) => {
@@ -58,9 +72,13 @@ profileRouters.get('/products', isAuth, async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).send(`Error trying to fetch all the products: ${error}`);
+        CustomErrors.createError(
+            "error fetching products",
+            DatabaseErrorInfo(error),
+            "error fetching products",
+            EErrors.DATABASE_ERROR
+        );
     };
-
 });
 
 
@@ -84,7 +102,12 @@ profileRouters.get('/products/:pid', async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).send(`Error trying to fetch product by id: ${error}`);
+        CustomErrors.createError(
+            "error fetching product by id",
+            ProductErrorInfo({id: pid}),
+            "error fetching product by id",
+            EErrors.PRODUCT_ERROR
+        );
     };
 })
 

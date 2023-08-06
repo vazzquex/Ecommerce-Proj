@@ -3,6 +3,12 @@ const router = Router();
 import productController from '../controllers/product.controller.js';
 import { isAdmin } from '../middleware/auth.middleware.js';
 
+// custom errors
+import CustomErrors from '../tools/CustomErrors.js';
+import EErrors from '../tools/EErrors.js';
+import { ProductErrorInfo } from '../tools/EErrorInfo.js';
+
+
 const realTimeProductsRouter = (socketServer) => {
 
     socketServer.on('connection', async (socket) => {
@@ -22,7 +28,12 @@ const realTimeProductsRouter = (socketServer) => {
                 const products = await productController.getProducts();
                 await socketServer.emit('products', products);
             } catch (error) {
-                console.error(`Error has been ocurred trying create a product: ${error}`);
+                CustomErrors.createError(
+                    "error creating products",
+                    ProductErrorInfo(newProduct),
+                    EErrors.PRODUCT_ERROR
+                );
+                //console.error(`Error has been ocurred trying create a product: ${error}`);
             };
         });
 
@@ -43,7 +54,7 @@ const realTimeProductsRouter = (socketServer) => {
 
         res.status(200).render('realTimeProducts', {
             script: 'realTimeProducts',
-            style: 'index',
+            style: 'realtimeProducts',
             title: 'Productos en tiempo real',
             
         });
