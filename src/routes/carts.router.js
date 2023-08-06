@@ -2,7 +2,9 @@ import { Router } from "express";
 
 import cartController from "../controllers/cart.controller.js";
 import userService from "../services/user.service.js";
-import userModel from "../dao/models/user.model.js";
+import userModel from "../DAOs/models/user.model.js";
+
+import { userRepository } from "../repositories/index.js";
 
 const router = Router();
 
@@ -41,7 +43,7 @@ router.post('/:userId/cart', async (req, res) => {
   const { productId, quantity } = req.body;
 
   try {
-    let user = await userService.getById(userId);
+    let user = await userRepository.getById(userId);
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -53,7 +55,6 @@ router.post('/:userId/cart', async (req, res) => {
     await userService.updateUser(user);
 
     user = await userModel.findById(userId).populate('cart.productId');
-
 
     const populatedUser = await userService.populateProductCart(userId);
 
@@ -88,7 +89,7 @@ router.post('/:userId/:productId', async (req, res) => {
   const { userId, productId } = req.params;
 
   try {
-    const user = await userService.getById(userId);
+    const user = await userRepository.getById(userId);
 
     // Filtra los productos en el carrito para excluir el producto que deseas eliminar
     user.cart = user.cart.filter(item => item.productId.toString() !== productId);

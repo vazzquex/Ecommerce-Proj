@@ -1,13 +1,14 @@
-import userModel from '../dao/models/user.model.js';
-import UserDto from './dto/UserDto.js';
+import UserDto from '../DTOs/UserDto.js';
+import UserRepository from '../repositories/user.repository.js';
+
 
 class UserService {
 	constructor() {
-		this.model = userModel;
+		this.repository = new UserRepository();
 	}
 
-	async populateProductCart(userId){
-		const user = await this.model.findById(userId).populate('cart.productId').lean();
+	async populateProductCart(userId) {
+		const user = await this.repository.findById(userId);
 		return new UserDto(
 			user.first_name,
 			user.last_name,
@@ -17,23 +18,15 @@ class UserService {
 			user.cart,
 			user.img
 		);
-	};
+	}
 
 	async updateUser(user) {
-		user.markModified('cart');
-		await user.save();
-	  
-		//populate the user cart after saving
+		await this.repository.save(user);
 		return await this.populateProductCart(user._id);
-	  }
-
-	// async getAll() {
-	// 	return await this.model.find();
-	// }
-
+	}
 
 	async getAll() {
-		const users = await this.model.find();
+		const users = await this.repository.getAll();
 		return users.map(user => new UserDto(
 			user.first_name,
 			user.last_name,
@@ -44,36 +37,6 @@ class UserService {
 			user.img
 		));
 	}
-
-
-	async getCartUser(userId) {
-		return await this.model.findOne(
-			{
-				_id: userId
-			},
-			{
-				_id: 0,
-				cart: 1
-			}
-		);
-	}
-
-	async getByEmail(email) {
-		return await this.model.findOne({ email: email });
-	}
-
-	async createUser(userData) {
-		return await this.model.create(userData);
-	}
-
-	async getById(id) {
-		return await this.model.findById(id);
-	}
-
-	async getByAge(age) {
-		return await this.model.findOne({ age: age });
-	}
-
 }
 
 const userService = new UserService();

@@ -20,7 +20,7 @@ import incializePassport from './config/passport.confg.js';
 // import dataProducts from './data/products.json' assert {type: 'json'};
 
 //model
-import productModel from './dao/models/products.model.js';
+import productModel from './DAOs/models/products.model.js';
 
 //routes
 import sessionsRouter from './routes/sessions.router.js';
@@ -32,7 +32,6 @@ import chatRouter from './routes/chat.router.js';
 import cartsRouter from './routes/carts.router.js';
 import usersRouter from './routes/user.router.js';
 import profileRouters from './routes/profile.router.js';
-import mockingRouters from './routes/mocking.router.js';
 
 // Config
 import config from './tools/config.js';
@@ -110,9 +109,6 @@ app.use("/products", profileRouters);
 app.use("/carts", viewsCartsRouter);
 app.use('/realTimeProducts', realTimeProductsRouter(socketServer));
 app.use("/chat", chatRouter(socketServer));
-app.use("/mockingproducts", mockingRouters);
-
-
 
 //mailing
 app.use('/api/sending', mailingRoutes)

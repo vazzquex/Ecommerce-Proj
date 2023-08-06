@@ -1,9 +1,11 @@
-import messagesModel from "../dao/models/messages.model.js";
+import messagesModel from "../DAOs/models/messages.model.js";
+import MessageDto from '../DTOs/MessageDto.js';
+
 class MessagesController {
   getMessages = async () => {
     try {
       const messages = await messagesModel.find().lean().exec();
-      return messages;
+      return messages.map(message => new MessageDto(message.user, message.message, message.time));
     } catch (error) {
       console.error(`Error trying to get messages: ${error}`);
     };
@@ -20,7 +22,7 @@ class MessagesController {
       };  
       const newMessage = new messagesModel(formattedMessage);
       await newMessage.save();
-      return newMessage;
+      return new MessageDto(newMessage.user, newMessage.message, newMessage.time);
     } catch (error) {
       console.error(`Error al enviar mensaje: ${error}`);
     };

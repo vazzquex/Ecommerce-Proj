@@ -20,7 +20,10 @@ const userSchema = new mongoose.Schema({
 		quantity: Number
 	}],
 	password: String,
-	img: String,
+	img: {
+		default: "https://www.carsaludable.com.ar/wp-content/uploads/2014/03/default-placeholder.png",
+		type: String
+	}
 });
 
 const userModel = mongoose.model('users', userSchema);

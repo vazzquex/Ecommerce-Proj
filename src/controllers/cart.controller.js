@@ -1,12 +1,12 @@
-import cartsModel from "../dao/models/carts.model.js"
-
+import cartsModel from "../DAOs/models/carts.model.js"
+import CartDto from "../DTOs/CartDto.js";
 
 class CartController {
   // Get
   getCarts = async () => {
     try{
       const carts = await cartsModel.find().populate("products.product");
-      return carts;
+      return carts.map(cart => new CartDto(cart.products));
     } catch (error){
       console.error(`Error trying to bring carts: ${error}`);
     };
@@ -16,7 +16,7 @@ class CartController {
   getCartById = async (id) => {
     try {
       const cart = await cartsModel.findById(id).lean().populate("products.product");
-      return cart;
+      return new CartDto(cart.products);
     } catch (error){
       console.error(`Error trying to bring cart by id: ${error}`);
     };

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import userService from '../services/user.service.js';
 import { encriptPass, comparePass } from '../tools/encrypt.js';
 import config from '../tools/config.js';
+import { userRepository } from '../repositories/index.js';
 
 const usersRouter = Router();
 
@@ -13,7 +14,7 @@ usersRouter.post('/', async (req, res) => {
 	};
 	try {
 		
-		const newUser = await userService.createUser(userData);
+		const newUser = await userRepository.createUser(userData);
 		res.status(201).json(newUser);
 	} catch (error) {
 		res.status(400).json({ error: error.message });
@@ -31,7 +32,7 @@ const admin = {
 usersRouter.post('/auth', async (req, res) => {
 	const { email, password } = req.body;
 	try {
-		const user = await userService.getByEmail(email);
+		const user = await userRepository.getByEmail(email);
 
 		if (email !== admin.email || password !== admin.password) {
 		

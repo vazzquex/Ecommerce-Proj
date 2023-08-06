@@ -1,4 +1,4 @@
-import productModel from '../dao/models/products.model.js';
+import productModel from '../DAOs/models/products.model.js';
 import mongoose from 'mongoose';
 
 class ProductController {
