@@ -24,6 +24,7 @@
                                 precio</a>
                             <a href="#" id="linkAsc" class="list-group-item list-group-item-action custom-border">Menor
                                 precio</a>
+                            <a href="#" id="relevant" class="list-group-item list-group-item-action custom-border">Relevante</a>
                         </div>
                     </div>
 
@@ -78,7 +79,10 @@
 
                                 <h5 class="card-title">{{this.title}}</h5>
                                 <p class="card-text">{{this.description}}</p>
-                                <p class="card-text pid" data-pid="{{this._id}}">ID: {{this._id}}</p>
+
+                                <!-- <p class="card-text pid" data-pid="{{this._id}}">ID: {{this._id}}</p> -->
+                                <input type="hidden" class="card-text pid" data-pid="{{this._id}}">
+
                                 <p class="card-text">Categoria: {{this.category}}</p>
 
                                 {{#if this.stock}}

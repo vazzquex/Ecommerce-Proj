@@ -16,6 +16,7 @@ router.get('/', async (req, res) => {
     const products = await productController.getProducts(limit, page, sort, query);
     res.status(200).send(products);
   } catch (error) {
+    req.logger.error(`Error al obtener productos: ${error}`);
     res.status(500).send(`Error al obtener productos: ${error}`);
   };
 });
@@ -47,8 +48,7 @@ router.get("/:pid", async (req, res) => {
       "error creating products",
       EErrors.PRODUCT_ERROR
     );
-
-    //res.status(500).send(`Error trying to fetch product by id: ${error}`);
+    req.logger.error(`Error trying to fetch product by id: ${error}`);
   };
 });
 
@@ -61,6 +61,7 @@ router.post("/", async (req, res) => {
     const currentProduct = await productController.addProduct(req.body);
     res.status(201).send({ currentProduct });
   } catch (error) {
+    req.logger.error(`Error trying to create a product: ${error}`);
     res.status(500).send(`Error trying to create a product: ${error}`);
   };
 
@@ -75,6 +76,7 @@ router.put("/:pid", async (req, res) => {
     const currentProduct = await productController.updateProduct(pid, req.body);
     res.status(201).send({ currentProduct });
   } catch (error) {
+    req.logger.error(`Error trying to update a product: ${error}`);
     res.status(500).send(`Error trying to create a product: ${error}`);
   };
 });
@@ -87,11 +89,8 @@ router.delete("/:pid", async (req, res) => {
     const deteledProduct = await productController.deleteProduct(pid);
     res.status(200).send(deteledProduct);
   } catch (error) {
-
-
+    req.logger.error(`Error trying to delete a product: ${error}`);
     res.status(500).send(`Error trying to create a product: ${error}`);
-
-
   };
 });
 

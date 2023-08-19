@@ -11,9 +11,11 @@
             <input class="form-control" id="titleInput" name="title" type="text" placeholder="Título" >
             <input class="form-control" id="priceInput" name="price" type="number" placeholder="Precio">
             <input class="form-control" id="stockInput" name="stock" type="number" placeholder="Stock">
-            {{!-- <input class="form-control" id="codeInput" type="text" name="code" placeholder="Código"> --}}
             <input class="form-control" id="categoryInput" type="text" name="category" placeholder="Categoria">
             <input class="form-control" id="thumbnailInput" type="text" name="thumbnail" placeholder="Link Thumbnail">
+            
+            <input type="hidden" id="userEmail" name="email" value="{{user.email}}">
+
             <textarea class="form-control" id="descripInput" name="descrip" placeholder="Descripcion" style="height: 100px"></textarea>
             <div>
                 <label for="statusInput">Status:</label>
@@ -40,5 +42,7 @@
 
     </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="/socket.io/socket.io.js"></script>
 <script src="../js/index.js"></script>

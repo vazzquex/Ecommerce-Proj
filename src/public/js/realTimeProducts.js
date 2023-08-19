@@ -7,8 +7,10 @@ const priceInput = document.getElementById('priceInput');
 const stockInput = document.getElementById('stockInput');
 const descripInput = document.getElementById('descripInput');
 const statusInput = document.getElementById('statusInput');
-//const codeInput = document.getElementById('codeInput');
 const categoryInput = document.getElementById('categoryInput');
+
+const userEmail = document.getElementById('userEmail');
+
 const thumbnailInput = document.getElementById('thumbnailInput');
 
 form.addEventListener('submit', (data) => {
@@ -17,11 +19,11 @@ form.addEventListener('submit', (data) => {
     const newProduct = {
         title: titleInput.value,
         description: descripInput.value,
-        //code: codeInput.value,
         price: priceInput.value,
         category: categoryInput.value,
         status: statusInput.checked, 
         stock: stockInput.value,
+        email: userEmail.value,
         thumbnail: thumbnailInput.value,
     };
 
@@ -44,6 +46,7 @@ socket.on('products', (products) => {
                         <p class="card-text">${product.description}</p>
                         <p class="card-text">$${product.price}</p>
                         <p class="card-text">ID: ${product._id}</p>
+                        <p class="card-text">Owner: ${product.owner}</p>
                         <p class="card-text">Stock: ${product.stock}</p>
                     </div>
                 </div>
@@ -62,7 +65,30 @@ const deleteInput = document.getElementById('deleteInput');
 deleteForm.addEventListener('submit', (data) => {
     data.preventDefault();
 
-    socket.emit('deleteProduct', idInput.value);
+    const productToDelete = {
+        id: idInput.value,
+        email: userEmail.value
+  };
+
+    socket.emit('deleteProduct', productToDelete);
 
     deleteForm.reset();
 });
+
+
+socket.on('deleteResult', (result) => {
+    if (result.success) {
+      Swal.fire(
+        'Success',
+        result.message,
+        'success'
+      )
+    } else {
+      Swal.fire(
+        'Error',
+        result.message,
+        'error'
+      )
+    }
+  });
+  

@@ -24,6 +24,8 @@
 
                     </div>
 
+                    <input type="hidden">
+
                     <!-- Segunda columna para las especificaciones -->
                     <div class="col-md-4 d-flex flex-column">
                         <div class="card-body">
@@ -32,10 +34,16 @@
                             <h3 class="card-text">${{product.price}} USD</h3>
                             <br>
                             <p class="card-text">{{product.description}}</p>
+
                             <p class="card-text pid" data-pid="{{product._id}}">ID: {{product._id}}</p>
+
                             <p class="card-text stock" data-stock="{{product.stock}}">Stock: {{product.stock}}</p>
+                            
                             <p class="card-text">Categoria: {{product.category}}</p>
 
+                            <p class="card-text">Owner: {{product.owner}}</p>
+                            
+    
 
                         </div>
 
@@ -107,7 +115,7 @@
         let stockElement = counterContainer.closest('.col-md-4').querySelector('.stock');
         let limit = parseInt(stockElement.getAttribute('data-stock'));
 
-        let originalLimit = limit;  //fix logic error :D
+        let originalLimit = limit; 
 
         incrementButton.addEventListener('click', function () {
             if (counter < originalLimit) {

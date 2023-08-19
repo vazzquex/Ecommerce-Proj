@@ -40,21 +40,21 @@ class ProductController {
 
     const title = product.title.trim();
     const description = product.description.trim();
-    //const code = product.code.trim();
     const price = Number(product.price);
     const category = product.category.trim();
     const status = product.status ?? true;
     const stock = Number(product.stock);
+    const owner = product.email;
     const thumbnail = product.thumbnail;
 
     const formattedProduct = {
       title: title,
       description: description,
-      //code: code,
       price: price,
       category: category,
       status: status,
       stock: stock,
+      owner: owner,
       thumbnail: thumbnail,
     };
 

@@ -1,16 +1,17 @@
-import productModel from '../DAOs/models/products.model.js';
-import ProductDto from '../DTOs/ProductsDto.js';
+import productRepository from '../repositories/products.repository.js';
 
-class ProductModel {
+class ProductService {
 	constructor() {
-		this.model = productModel;
+		this.repository = productRepository;
 	}
 
 	async getById(id) {
-		return await this.model.findById(id);
+		const product = await this.repository.getById(id);
+		return product; // Este será un objeto de tipo ProductDto
 	}
+
 	
 }
 
-const productService = new ProductModel();
+const productService = new ProductService();
 export default productService;

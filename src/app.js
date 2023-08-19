@@ -2,7 +2,11 @@
 import mongoose from 'mongoose';
 import express from 'express';
 import { Server } from 'socket.io';
+
 import handlebars from 'express-handlebars';
+import exphbs from 'express-handlebars';
+import Handlebars from 'handlebars';
+
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
@@ -12,6 +16,7 @@ import productController from './controllers/product.controller.js';
 
 //middleware
 import { isAdmin } from './middleware/auth.middleware.js';
+import { loggerMiddleware } from './middleware/logger.middleware.js';
 
 //passport
 import incializePassport from './config/passport.confg.js';
@@ -33,6 +38,9 @@ import cartsRouter from './routes/carts.router.js';
 import usersRouter from './routes/user.router.js';
 import profileRouters from './routes/profile.router.js';
 import mockingRouters from './routes/mocking.router.js';
+import loggerTest from './routes/logger.test.router.js';
+
+import restoreRouter from './routes/restore.router.js';
 
 // Config
 import config from './tools/config.js';
@@ -41,15 +49,28 @@ import mailingRoutes from './routes/mailing.js';
 const app = express();
 const port = 8080;
 
+app.use(loggerMiddleware);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('./src/public'));
 
 //Handlebars
+
+const handlebarsInstance = exphbs.create({
+	handlebars: Handlebars
+});
+
+// Registrar el ayudante "eq"
+Handlebars.registerHelper('eq', function (a, b) {
+	return a === b;
+});
+
 app.engine('handlebars', handlebars.engine());
 app.set('views', './src/views');
 app.set('view engine', 'handlebars');
+
 
 //Coockies
 app.use(cookieParser(config.secret));
@@ -73,12 +94,20 @@ app.use(
 
 mongoose.set("strictQuery", false);
 try {
-    await mongoose.connect(config.mongoUrl);
+	await mongoose.connect(config.mongoUrl);
 } catch {
-    console.error(`Database connection failed: ${error}`);
+	console.error(`Database connection failed: ${error}`);
 };
 
 incializePassport();
+
+// app.use((req, res, next) => {
+// 	req.user = { rol: 'premium' }; // Valor ficticio
+// 	next();
+//   });
+
+
+
 
 app.use("/", profileRouters);
 
@@ -91,7 +120,7 @@ app.use("/api/carts", cartsRouter);
 
 //app.use(express.static('public'));
 
-//insert product data if necessary1
+//insert product data
 
 // try {
 //     await productModel.insertMany(dataProducts);
@@ -101,7 +130,7 @@ app.use("/api/carts", cartsRouter);
 
 
 const httpServer = app.listen(port, () => {
-    console.log(`Escuchando por el puerto ${port}`);
+	console.log(`Escuchando por el puerto ${port}`);
 });
 const socketServer = new Server(httpServer);
 
@@ -111,8 +140,10 @@ app.use("/carts", viewsCartsRouter);
 app.use('/realTimeProducts', realTimeProductsRouter(socketServer));
 app.use("/chat", chatRouter(socketServer));
 app.use("/mockingproducts", mockingRouters);
+app.use("/loggerTest", loggerTest)
 
-
+app.use("/restore", restoreRouter)
 
 //mailing
 app.use('/api/sending', mailingRoutes)
+

@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema({
 	img: {
 		default: "https://www.carsaludable.com.ar/wp-content/uploads/2014/03/default-placeholder.png",
 		type: String
-	}
+	},
+
+	resetPasswordToken: String,
+	resetPasswordExpires: Date
+
 });
 
 const userModel = mongoose.model('users', userSchema);

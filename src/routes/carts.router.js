@@ -14,7 +14,7 @@ router.get('/:userId/cart', async (req, res) => {
     const carts = await cartController.getCarts();
     res.status(200).json({ carts });
   } catch (error) {
-    console.error(`Error trying to get carts: ${error}`);
+    req.logger.error(`Error trying to get carts: ${error}`);
     res.status(500).send(`Internal server error trying to get carts: ${error}`);
   };
 });
@@ -30,7 +30,7 @@ router.get('/:userId', async (req, res) => {
     const currentCart = await cartController.deleteProductOfCart(cid, pid);
     res.status(202).json(currentCart);
   } catch (error) {
-    console.error(`Error trying to add a product to cart: ${error}`);
+    req.logger.error(`Error trying to add a product to cart: ${error}`);
     res.status(500).send(`Internal server error trying to add a product to cart: ${error}`);
   };
 
@@ -46,6 +46,7 @@ router.post('/:userId/cart', async (req, res) => {
     let user = await userRepository.getById(userId);
 
     if (!user) {
+      req.logger.error(`User ${userId} does not exist`);
       return res.status(404).json({ error: 'User not found' });
     }
 
@@ -63,6 +64,7 @@ router.post('/:userId/cart', async (req, res) => {
     //.json(populatedUser);
 
   } catch (error) {
+    req.logger.error(error)
     res.status(400).json({ error: error.message });
   }
 });
@@ -77,7 +79,7 @@ router.put('/:cid', async (req, res) => {
     const currentCart = await cartController.updateAllProducts(cid, updatedProducts);
     res.status(202).json(currentCart);
   } catch (error) {
-    console.error(`Error trying to add a product to cart: ${error}`);
+    req.logger.error(`Error trying to add a product to cart: ${error}`);
     res.status(500).send(`Internal server error trying to add a product to cart: ${error}`);
   };
 });
@@ -92,6 +94,7 @@ router.post('/:userId/:productId', async (req, res) => {
     const user = await userRepository.getById(userId);
 
     // Filtra los productos en el carrito para excluir el producto que deseas eliminar
+    req.logger.debug("Filtro los productos en el carrito");
     user.cart = user.cart.filter(item => item.productId.toString() !== productId);
 
     // save user
@@ -105,7 +108,7 @@ router.post('/:userId/:productId', async (req, res) => {
 
 
   } catch (error) {
-    console.error(`Error removing product from cart: ${error}`);
+    req.logger.error(`Error removing product from cart: ${error}`);
     res.status(500).send(`Internal server error removing product from cart: ${error}`);
   }
 });
@@ -119,7 +122,7 @@ router.post('/:cid/products/delete/:pid', async (req, res) => {
     const currentCart = await cartController.deleteProductOfCart(cid, pid);
     res.status(202).json(currentCart);
   } catch (error) {
-    console.error(`Error trying to add a product to cart: ${error}`);
+    req.logger.error(`Error trying to add a product to cart: ${error}`);
     res.status(500).send(`Internal server error trying to add a product to cart: ${error}`);
   };
 });

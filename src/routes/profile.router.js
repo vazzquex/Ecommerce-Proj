@@ -18,7 +18,7 @@ profileRouters.get('/', isAuth, (req, res) => {
 
         res.render('index', {
             title: 'Perfil de Usuario',
-            user
+            user,
         });
     } catch {
         CustomErrors.createError(
@@ -27,6 +27,8 @@ profileRouters.get('/', isAuth, (req, res) => {
             "error accessing route",
             EErrors.ROUTING_ERROR
         );
+        req.logger.error(`Error accessing user profile route: ${error}`);
+
     }
 });
 
@@ -78,6 +80,7 @@ profileRouters.get('/products', isAuth, async (req, res) => {
             "error fetching products",
             EErrors.DATABASE_ERROR
         );
+        req.logger.error(`Error fetching products: ${error}`);
     };
 });
 
@@ -104,10 +107,11 @@ profileRouters.get('/products/:pid', async (req, res) => {
     } catch (error) {
         CustomErrors.createError(
             "error fetching product by id",
-            ProductErrorInfo({id: pid}),
+            ProductErrorInfo({ id: pid }),
             "error fetching product by id",
             EErrors.PRODUCT_ERROR
         );
+        req.logger.error(`Error fetching product by id: ${error}`);
     };
 })
 

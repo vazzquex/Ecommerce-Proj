@@ -6,7 +6,6 @@ const mockingRouters = Router();
 
 // Función para generar los productos ficticios
 const generateProducts = () => {
-    //let numOfProducts = faker.string.numeric({ min: 20, max: 40});
     let numOfProducts = Math.floor(Math.random() * (30 - 26 + 1)) + 10;
     let products = [];
     for (let i = 0; i < numOfProducts; i++) {
@@ -31,6 +30,7 @@ const getProducts = (limit, page, sort, query) => {
 
     let formattedProducts = allProducts;
     if (query) {
+        req.logger.error(`Filter by Query`);
         formattedProducts = allProducts.filter((product) => product.category === query);
     }
 
@@ -94,6 +94,7 @@ mockingRouters.get('/', isAuth, async (req, res) => {
         });
 
     } catch (error) {
+        req.logger.error(`Error trying to fetch all the products: ${error}`)
         res.status(500).send(`Error trying to fetch all the products: ${error}`);
     }
 });

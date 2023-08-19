@@ -2,11 +2,13 @@ import { Router } from "express";
 import messagesController from "../controllers/message.controller.js";
 import userService from "../services/user.service.js";
 
+import logger from "../middleware/logger.middleware.js";
+
 const router = Router();
 
 const chatMessagesRouter = (socketServer) => {
   socketServer.on('connection', async (socket) => {
-    console.log(`New connection: ${socket.id}`);
+    logger.debug(`New connection: ${socket.id}`);
 
     // Bring chat history on connection
     try{
@@ -14,7 +16,7 @@ const chatMessagesRouter = (socketServer) => {
       // Send history
       socketServer.emit('history', history);
     } catch (error) {
-      console.error(`Error al conseguir mensajes: ${error}`);
+      logger.error(`Error al conseguir mensajes: ${error}`)
     };
 
     // Send message
@@ -23,8 +25,9 @@ const chatMessagesRouter = (socketServer) => {
           const newMessage = await messagesController.addMessage(msg);
           // Send last message
           socketServer.emit('currentMessage', newMessage);
+          logger.debug("Mensaje enviado")
         } catch (error) {
-          console.error(`Error al conseguir mensajes: ${error}`);
+          logger.error(`Error al conseguir mensajes: ${error}`)
         };
     });
   });

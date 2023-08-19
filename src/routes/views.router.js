@@ -7,6 +7,9 @@ const viewsRouter = Router();
 // Get
 viewsRouter.get('/', async (req, res) => {
     try {
+        
+        req.logger.info(`Fetching products with query: ${JSON.stringify(req.query)}`);
+
         const {limit, page, sort, query} = req.query;
         const products = await productController.getProducts(limit, page, sort, query);
 
@@ -20,6 +23,9 @@ viewsRouter.get('/', async (req, res) => {
             };
         }; 
 
+        req.logger.info('Products fetched successfully.');
+
+
         res.status(200).render('products', {
             script: 'index',
             style: 'index',
@@ -28,6 +34,7 @@ viewsRouter.get('/', async (req, res) => {
         });
   
     } catch (error) {
+        req.logger.error(`Error trying to fetch all the products: ${error}`);
         res.status(500).send(`Error trying to fetch all the products: ${error}`);
     };
   
@@ -38,14 +45,20 @@ viewsRouter.get('/:pid', async (req, res) => {
     const productId = req.params.pid;
 
     try {
+
+        req.logger.info(`Fetching product with id: ${productId}`);
+
         const product = await productController.getProductById(productId);
-  
+
+        req.logger.info(`Product with id: ${productId} fetched successfully.`);
+
         res.status(200).render('product', {
             style: 'index',
             title: `${product.title}`,
             product: product.toObject()
         });
     } catch (error) {
+        req.logger.error(`Error trying to fetch product by id: ${error}`);
         res.status(500).send(`Error trying to fetch product by id: ${error}`);
     };
 });

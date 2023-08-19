@@ -9,7 +9,7 @@ import TicketDTO from '../DTOs/TicketsDto.js'
 
 import 'dotenv/config'
 import productService from '../services/products.service.js';
-import { userRepository } from '../repositories/index.js';
+import { productRepository, userRepository } from '../repositories/index.js';
 
 //twilio info
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
@@ -22,6 +22,7 @@ const email_pass = process.env.EMAIL_PASS
 const mailingRoutes = Router();
 
 
+
 mailingRoutes.post("/mail", async (req, res) => {
 
     const { userEmail, products, total } = req.body;
@@ -29,7 +30,10 @@ mailingRoutes.post("/mail", async (req, res) => {
 
     const user = await userRepository.getByEmail(userEmail);
 
+    req.logger.info("Getting user Email")
+
     if (!user) {
+        req.logger.error(`User ${userEmail} does not exist`);
         return res.status(404).json({ error: "User not found" });
     }
 
@@ -48,13 +52,14 @@ mailingRoutes.post("/mail", async (req, res) => {
         subtotalTotal += productSubtotal; // Suma al subtotal acumulado
 
         // encontrar producto en db
-        let dbproduct = await productService.getById(id)
+        let dbproduct = await productRepository.getById(id)
+
 
         if (!dbproduct) {
-            console.error(`Product with ID ${id} not found.`);
+            req.logger.error(`Product with ID ${id} not found)`);
             return res.status(404).json({ error: `Product with ID ${id} not found.` });
         } else {
-            console.log(`Product with ID ${id} is found`);
+            req.logger.debug(`Product with ID ${id} is found`);
         }
 
         //restamos el stock que se comptro
@@ -67,6 +72,7 @@ mailingRoutes.post("/mail", async (req, res) => {
             })
 
         } else {
+            req.logger.debug("Restamos el stock")
             dbproduct.stock -= quantity;
         }
 
@@ -140,13 +146,13 @@ mailingRoutes.post("/mail", async (req, res) => {
         //attachments: []
     });
 
-    trasport.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error(error);
-            res.send('No se puedo enviar el correo electrónico' + error);
-        }
-        console.log('Correo electrónico enviado: ' + info.response);
-    });
+    // trasport.sendMail(mailOptions, (error, info) => {
+    //     if (error) {
+    //         console.error(error);
+    //         res.send('No se puedo enviar el correo electrónico' + error);
+    //     }
+    //     console.log('Correo electrónico enviado: ' + info.response);
+    // });
 
     res.status(201).json(`The details of the purchase have been sent to:  ${userEmail}`);
 });

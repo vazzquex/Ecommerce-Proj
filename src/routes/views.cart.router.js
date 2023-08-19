@@ -7,6 +7,8 @@ const router = Router();
 router.get('/purchase/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
+        req.logger.info(`Starting purchase process for user: ${userId}`);
+
         const { user: sessionUser } = req.session;
         delete sessionUser.password;
 
@@ -14,6 +16,8 @@ router.get('/purchase/:userId', async (req, res) => {
 
         //verify user exists
         if (!populatedUser) {
+            req.logger.warning(`User not found for ID: ${userId}`);
+
             return res.status(404).render('error', {
                 title: "Error",
                 message: "User not found"
@@ -40,6 +44,7 @@ router.get('/purchase/:userId', async (req, res) => {
             };
         });
 
+        req.logger.info('Purchase process completed successfully.');
 
         res.status(201).render('checkout', {
             title: "Checkout",
@@ -50,7 +55,7 @@ router.get('/purchase/:userId', async (req, res) => {
 
 
     } catch (err) {
-        console.error(`Error trying to get checkout: ${err}`);
+        req.logger.error(`Error trying to get checkout: ${err}`);
         res.status(500).send(`Internal server error trying to get checkout: ${err}`);
     }
 
@@ -62,6 +67,8 @@ router.get('/purchase/:userId', async (req, res) => {
 router.post('/:userId', async (req, res) => {
     const { userId } = req.params;
     try {
+        req.logger.info(`Fetching cart for user: ${userId}`);
+
         const { user: sessionUser } = req.session;
         delete sessionUser.password;
 
@@ -70,12 +77,15 @@ router.post('/:userId', async (req, res) => {
 
         //verify user exists
         if (!populatedUser) {
+            req.logger.warning(`User not found for ID: ${userId}`);
+
             return res.status(404).render('error', {
                 title: "Error",
                 message: "User not found"
             });
         }
 
+        req.logger.info('Cart fetched successfully.');
 
         res.status(201).render('cart', {
             title: "Cart",
@@ -84,7 +94,7 @@ router.post('/:userId', async (req, res) => {
         })
 
     } catch (error) {
-        console.error(`Error trying to get cart: ${error}`);
+        req.logger.error(`Error trying to get cart: ${error}`);
         res.status(500).send(`Internal server error trying to get cart: ${error}`);
     };
 });

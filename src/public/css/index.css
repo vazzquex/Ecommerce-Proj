@@ -49,8 +49,14 @@ textarea,
 
 .image-product {
     margin: 20px;
-    width: calc(100% - 40px); /* ajuste el ancho restando los márgenes */
-    height: 260px; /* ajuste la altura restando los márgenes */
+    justify-content: center;
+    align-items: center;
+
+    /* ajuste el ancho restando los márgenes */
+    /* width: calc(100% - 40px);  */
+
+    /* ajuste la altura restando los márgenes */
+    height: 260px; 
     background-size: cover;
     background-position: center;
 
