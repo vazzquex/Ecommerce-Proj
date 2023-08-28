@@ -4,7 +4,7 @@ import cartController from "../controllers/cart.controller.js";
 import userService from "../services/user.service.js";
 import userModel from "../DAOs/models/user.model.js";
 
-import { userRepository } from "../repositories/index.js";
+import { productRepository, userRepository } from "../repositories/index.js";
 
 const router = Router();
 
@@ -44,10 +44,17 @@ router.post('/:userId/cart', async (req, res) => {
 
   try {
     let user = await userRepository.getById(userId);
+    let product = await productRepository.getById(productId);
 
     if (!user) {
       req.logger.error(`User ${userId} does not exist`);
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).send({ error: 'User not found' });
+    }
+    console.log(product.owner)
+
+    if(user.email === product.owner) {
+      req.logger.warning("You cannot add your own product to the cart!")
+      return res.status(400)
     }
 
     user.cart.push({ productId, quantity });
@@ -60,12 +67,12 @@ router.post('/:userId/cart', async (req, res) => {
     const populatedUser = await userService.populateProductCart(userId);
 
     // Respond with the populated user.
-    res.status(200)
-    //.json(populatedUser);
+    return res.status(200)
+
 
   } catch (error) {
     req.logger.error(error)
-    res.status(400).json({ error: error.message });
+    res.status(400).send({ error: error.message });
   }
 });
 

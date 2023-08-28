@@ -3,7 +3,7 @@
         <div class="col-md-6 offset-md-3">
             <h2 class="mb-2">Recover password</h2>
             <p>Please enter your email address to receive the reset link.</p>
-            <form action="/restore/forgot-password" method="post">
+            <form action="/restore/forgot-password" method="post" id="emailSend">
                 <div class="form-group">
                     <label for="email">Correo Electrónico</label>
                     <input type="email" class="form-control" id="email" name="email" required>
@@ -12,3 +12,53 @@
             </form>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+    <script>
+        document.getElementById('emailSend').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const sendButton = document.querySelector('#emailSend button'); // Obtiene una referencia al botón
+
+            sendButton.disabled = true; // Deshabilita el botón
+
+            try {
+                const response = await fetch('/restore/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message
+                    }).then(() => {
+                        window.location.href = "/";
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'An error occurred',
+                    text: 'Please try again later.'
+                });
+            } finally {
+                sendButton.disabled = false; // Habilita el botón nuevamente
+            }
+        });
+
+    </script>

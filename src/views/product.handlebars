@@ -38,12 +38,12 @@
                             <p class="card-text pid" data-pid="{{product._id}}">ID: {{product._id}}</p>
 
                             <p class="card-text stock" data-stock="{{product.stock}}">Stock: {{product.stock}}</p>
-                            
+
                             <p class="card-text">Categoria: {{product.category}}</p>
 
                             <p class="card-text">Owner: {{product.owner}}</p>
-                            
-    
+
+
 
                         </div>
 
@@ -60,20 +60,22 @@
                             <div class="mt-auto d-flex justify-content-center align-items-center shop-btn">
                                 <a href="http://localhost:8080/carts/purchase/{{user._id}}">
                                     <button type="button" class="purchaseBtn btn btn-primary shop-btn"
-                                        style="width: 350px;">Comprar
-                                        Ahora</button>
+                                        style="width: 350px;">Buy Now</button>
                                 </a>
                             </div>
 
 
                             <div class="col d-flex justify-content-center">
                                 <div class="d-flex flex-column justify-content-center align-items-center">
+
+
+
                                     <form action="/api/carts/{{user._id}}/cart" method="post">
                                         <input type="hidden" name="productId" value="{{product._id}}">
                                         <input type="hidden" name="quantity" value="1">
                                         <button type="submit" name="addcart" class="btn btn-secondary"
-                                            onclick="addProductAlert()" style="width: 350px;">Agregar al
-                                            Carrito</button>
+                                            onclick="addProductAlert('{{user.email}}', '{{product.owner}}')"
+                                            style="width: 350px;">Add to Cart</button>
                                     </form>
                                 </div>
                             </div>
@@ -85,8 +87,10 @@
     </div>
 </section>
 
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/products.js"></script>
+
 
 <script>
 
@@ -115,7 +119,7 @@
         let stockElement = counterContainer.closest('.col-md-4').querySelector('.stock');
         let limit = parseInt(stockElement.getAttribute('data-stock'));
 
-        let originalLimit = limit; 
+        let originalLimit = limit;
 
         incrementButton.addEventListener('click', function () {
             if (counter < originalLimit) {
@@ -178,6 +182,5 @@
         });
 
     });
-
 
 </script>

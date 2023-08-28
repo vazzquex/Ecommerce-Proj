@@ -66,24 +66,30 @@
                         Update to Premium
                     </button>
                 </form>
+                {{/if}}
 
+                {{#if (eq user.rol 'premium')}}
+                <form action='/api/users/premium/{{user._id}}' method='post'>
+                    <input type="hidden" name="userId" value="{{this._id}}">
+                    <button class='btn btn-outline-success ms-3 ' type='submit'>
+                        Back to User
+                    </button>
+                </form>
                 {{/if}}
 
 
 
                 <form action='/api/users/logout' method='post'>
                     <button class='btn btn-outline-danger ms-3 ' type='submit'>
-                        Cerrar Sesión
+                        Log Out
                     </button>
                 </form>
 
                 <form action="/carts/{{user._id}}" method="post">
                     <input type="hidden" name="productId" value="{{this._id}}">
                     <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="btn btn-primary">Ir al carrito</button>
+                    <button type="submit" class="btn btn-primary">Go to Cart</button>
                 </form>
-
-
 
 
                 {{else}}

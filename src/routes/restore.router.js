@@ -20,11 +20,11 @@ restoreRouter.post('/forgot-password', async (req, res) => {
     try {
         const { email } = req.body;
 
-        req.logger.info(`Solicitud de restablecimiento de contraseña para ${email}`);
+        req.logger.debug(`Solicitud de restablecimiento de contraseña para ${email}`);
         const user = await userRepository.getByEmail(email);
         if (!user) {
             req.logger.warning(`Usuario no encontrado: ${email}`);
-            return res.status(400).send('Usuario no encontrado');
+            return res.status(400).json({ success: false, message: 'User not Found' });
         }
 
         // Generar token
@@ -48,7 +48,7 @@ restoreRouter.post('/forgot-password', async (req, res) => {
 
         const mailOptions = {
             to: email,
-            from: emailOwn,
+            from: `Reset Password <${emailOwn}>`,
             subject: 'Restablecimiento de contraseña',
             text: `Por favor, haz clic en el siguiente enlace para completar el proceso:\n\nhttp://${req.headers.host}/restore/reset-password/${token}\n\nSi no solicitaste esto, por favor ignora este mensaje.`
         };
@@ -58,8 +58,8 @@ restoreRouter.post('/forgot-password', async (req, res) => {
                 req.logger.error(`Error al enviar correo: ${err.message}`);
                 return res.status(500).send(err.message);
             }
-            req.logger.info('Correo enviado exitosamente');
-            res.send('Correo enviado exitosamente');
+            req.logger.info('Mail sent successfully');
+            res.json({ success: true, message: 'Mail sent successfully' });
         });
     } catch (error) {
         req.logger.error(`Error en la solicitud de restablecimiento de contraseña: ${error.message}`);

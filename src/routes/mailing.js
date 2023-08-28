@@ -154,6 +154,7 @@ mailingRoutes.post("/mail", async (req, res) => {
     //     console.log('Correo electrónico enviado: ' + info.response);
     // });
 
+    req.logger.debug("Correo Enviado")
     res.status(201).json(`The details of the purchase have been sent to:  ${userEmail}`);
 });
 

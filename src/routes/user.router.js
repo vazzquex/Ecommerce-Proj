@@ -35,20 +35,35 @@ usersRouter.post('/', async (req, res) => {
 
 usersRouter.post('/premium/:uid', async (req, res) => {
 	const uid = req.params.uid;
-	console.log(uid);
+	req.logger.debug(`User ID ${uid}`)
 
 	try {
-		req.logger.info('Updating rol user...');
+		req.logger.info('Updating rol...');
 		const user = await userRepository.findById(uid);
 
 		if (user.rol == 'premium') {
-			req.logger.warning("You are already a premium user");
-			return res.status(400).send("You are already a premium user");
+			
+			await userRepository.updateRolToUser(uid);
+			req.logger.info('User update to user');
+
+			// Actualiza el objeto de usuario en la sesión
+			req.session.user.rol = 'user';
+
+			// Guarda los cambios en la sesión
+			req.session.save(err => {
+				if (err) {
+					req.logger.error("Error in save session")
+				} else {
+					res.redirect('/');
+				}
+			});
+		
 		}
 
 		if (user.rol == 'user') {
+
 			await userRepository.updateRolToPremium(uid);
-			req.logger.info('User rol updated to premium');
+			req.logger.info('User update to premium');
 
 			// Actualiza el objeto de usuario en la sesión
 			req.session.user.rol = 'premium';
@@ -56,21 +71,19 @@ usersRouter.post('/premium/:uid', async (req, res) => {
 			// Guarda los cambios en la sesión
 			req.session.save(err => {
 				if (err) {
-					// Maneja el error
+					req.logger.error("Error in save session")
 				} else {
-					// Redirige al usuario
 					res.redirect('/');
 				}
 			});
+		
 		}
 
 	} catch (error) {
-		req.logger.error('Error updating user rol:', error);
+		req.logger.panic('Error updating rol:', error);
 		return res.status(500).send('Error updating user rol');
 	}
 });
-
-
 
 usersRouter.post('/auth', async (req, res) => {
 	const { email, password } = req.body;
