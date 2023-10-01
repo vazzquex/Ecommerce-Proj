@@ -1,11 +1,10 @@
 ## Actualizaciones y Mejoras
 
 ### 1. Sistema de Envio de Correos
-Cuando se elimina a un usuario ya sea por inactividad o tambien se elimina el producto de un usuario, este es notificado por email
+He implementado un sistema de notificación por correo electrónico que asegura que los usuarios sean informados cuando se elimina su cuenta debido a inactividad o cuando uno de sus productos es eliminado.
 
 ### 2. Centro de control para el admin
-Ahora hay una nueva vista para el admin donde puede eliminar a usuarios o actualizar sus roles
-
+Se añadio un nuevo panel de control solo para el admin. En este panel, tenes la capacidad de eliminar usuarios o modificar sus roles.
 
 ## 📝 Variables de Entorno
 
