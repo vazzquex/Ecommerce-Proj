@@ -16,6 +16,13 @@ const createUser = async (req, res) => {
         cart: [],
     };
     try {
+        req.logger.debug("Comparing emails admin")
+        
+        if(req.body.email === admin.email){
+            req.logger.error("Can not use that email")
+            return res.status(400).json({ messaje: "Can not use that email"})
+        }
+
         req.logger.info('Creating new user');
 
         const newUser = await userService.createUser(userData);

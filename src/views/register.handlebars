@@ -3,39 +3,98 @@
 		<div class='col-lg-2 d-none d-lg-block'></div>
 		<div class='col-lg-8 p-5'>
 			<h1 class='mb-4'>Registrar Nuevo Usuario</h1>
-			<form action='/api/users/' method='post'>
-				<div class='row g-3'>
-					<div class='col-md-6'>
-						<input type='text' class='form-control form-control-lg' placeholder='Nombre' aria-label='Nombre'
-							name='first_name' />
-					</div>
-					<div class='col-md-6'>
-						<input type='text' class='form-control form-control-lg' placeholder='Apellido'
-							aria-label='Apellido' name='last_name' />
-					</div>
-					<div class='col-12'>
-						<input type='email' class='form-control form-control-lg' placeholder='Correo Electronico'
-							aria-label='Correo' name='email' />
-					</div>
-					<div class='col-md-6'>
-						<input type='password' class='form-control form-control-lg' placeholder='Contraseña'
-							aria-label='Contraseña' name='password' />
-					</div>
-					<div class='col-md-6'>
-						<input type='age' class='form-control form-control-lg' placeholder='Age' aria-label='Age'
-							name='age' />
-					</div>
-
-					{{!-- <div class='col-md-12'>
-						<input type='text' class='form-control form-control-lg' placeholder='Imagen' aria-label='Imagen'
-							name='img' />
-					</div> --}}
-
-					<button type='submit' class='btn btn-primary btn-lg btn-block mt-3'>Registrar</button>
+			<div class='row g-3'>
+				<div class='col-md-6'>
+					<input type='text' class='form-control form-control-lg' placeholder='Nombre' aria-label='Nombre'
+						id='first_name' />
 				</div>
-			</form>
+				<div class='col-md-6'>
+					<input type='text' class='form-control form-control-lg' placeholder='Apellido' aria-label='Apellido'
+						id='last_name' />
+				</div>
+				<div class='col-12'>
+					<input type='email' class='form-control form-control-lg' placeholder='Correo Electronico'
+						aria-label='Correo' id='email' />
+				</div>
+				<div class='col-md-6'>
+					<input type='password' class='form-control form-control-lg' placeholder='Contraseña'
+						aria-label='Contraseña' id='password' />
+				</div>
+				<div class='col-md-6'>
+					<input type='age' class='form-control form-control-lg' placeholder='Age' aria-label='Age'
+						id='age' />
+				</div>
+
+				<button type='button' class='btn btn-primary btn-lg btn-block mt-3' id='submitBtn'>Registrar</button>
+			</div>
 		</div>
 		<div class='col-lg-2 d-none d-lg-block'></div>
-
 	</div>
 </section>
+
+<!-- Agregamos SweetAlert CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+	document.getElementById('submitBtn').addEventListener('click', function (event) {
+		event.preventDefault(); // Evitar la recarga de la página
+
+		// Captura los valores de los campos de entrada
+		const firstName = document.getElementById('first_name').value;
+		const lastName = document.getElementById('last_name').value;
+		const email = document.getElementById('email').value;
+		const password = document.getElementById('password').value;
+		const age = document.getElementById('age').value;
+
+		// Crea un objeto de datos para enviar al servidor
+		const data = {
+			first_name: firstName,
+			last_name: lastName,
+			email: email,
+			password: password,
+			age: age
+		};
+
+		// Realiza una solicitud Fetch al servidor
+		fetch('/api/users/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		})
+			.then(response => {
+				if (response.ok) {
+					Swal.fire({
+						icon: 'success',
+						title: '¡User Registered!',
+						text: 'The user has been registered successfully.'
+					}).then(() => {
+						window.location.href = '/';
+					});
+				} else if (response.status === 400) {
+					response.json().then(data => {
+						Swal.fire({
+							icon: 'error',
+							title: 'Error Registering User',
+							text: data.message // Muestra el mensaje del servidor
+						});
+					});
+				} else {
+					Swal.fire({
+						icon: 'error',
+						title: 'Error Registering User',
+						text: 'There was an error registering the user. Please try again.'
+					});
+				}
+			})
+			.catch(error => {
+				console.error('Error in Fetch request:', error);
+				Swal.fire({
+					icon: 'error',
+					title: 'Request Error',
+					text: 'There was an error in the server request. Please try again.'
+				});
+			});
+	});
+</script>
