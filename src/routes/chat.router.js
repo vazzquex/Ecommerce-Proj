@@ -1,6 +1,6 @@
 import { Router } from "express";
 import messagesController from "../controllers/message.controller.js";
-import userService from "../services/user.service.js";
+import { userService } from "../services/index.js";
 
 import logger from "../middleware/logger.middleware.js";
 

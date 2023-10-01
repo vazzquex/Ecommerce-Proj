@@ -15,7 +15,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true 
   },
-  status: Boolean,
+  status: {
+    type: Boolean,
+    default: true
+  },
   stock:{
     type: Number, 
     required: true
@@ -26,6 +29,7 @@ const productSchema = new mongoose.Schema({
   },
   thumbnail: {
     type: String,
+    default: 'https://www.carsaludable.com.ar/wp-content/uploads/2014/03/default-placeholder.png'
     //required: true
   },
   owner: {

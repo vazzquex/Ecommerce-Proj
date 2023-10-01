@@ -1,19 +1,12 @@
 import { Router } from 'express';
 import passport from 'passport';
 import { filterCurrent } from '../middleware/current.middleware.js';
-
+import sessionController from '../controllers/session.controller.js'
+import { userService } from '../services/index.js';
 
 const sessionsRouter = Router();
 
-sessionsRouter.get('/current', filterCurrent, (req, res) => {
-	if(req.session.user){
-		req.logger.info('Fetching current authenticated user');
-		res.json(req.session.user);
-	} else {
-		req.logger.error('No authenticated user found');
-		res.status(401).json({ messsage: 'No se encontro el usuario autenticado'});
-	}
-});
+sessionsRouter.get('/current', filterCurrent, sessionController.getCurrentUser);
 
 sessionsRouter.get(
 	'/github',
@@ -26,10 +19,16 @@ sessionsRouter.get(
 sessionsRouter.get(
 	'/githubcallback',
 	passport.authenticate('github', { failureRedirect: '/login' }),
-	(req, res) => {
+	async (req, res) => {
 		if (req.user) {
 			req.logger.info('GitHub authentication successful');
 			req.session.user = req.user;
+
+			const user = await userService.getById(req.user._id)
+
+			user.last_connection = Date.now();
+			user.save();
+
 		} else {
 			req.logger.warning('GitHub authentication failed');
 		}

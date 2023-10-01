@@ -70,13 +70,14 @@
 
 
 
-                                    <form action="/api/carts/{{user._id}}/cart" method="post">
+                                    <form id="add-to-cart-form" action="/api/carts/{{user._id}}/cart" method="post">
                                         <input type="hidden" name="productId" value="{{product._id}}">
                                         <input type="hidden" name="quantity" value="1">
                                         <button type="submit" name="addcart" class="btn btn-secondary"
                                             onclick="addProductAlert('{{user.email}}', '{{product.owner}}')"
                                             style="width: 350px;">Add to Cart</button>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
@@ -128,20 +129,18 @@
 
                 if (counter == originalLimit) {
                     incrementButton.disabled = true;
-
                 }
                 if (counter > 0) {
                     decrementButton.disabled = false;
                     purchaseBtn.disabled = false;
                     addToCartBtn.disabled = false;
                     purchaseLink.setAttribute('href', originalHref);
-
                 }
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'No hay mas stock! ' + originalLimit,
+                    text: 'Not stock! ' + originalLimit,
                 })
             }
             counterDisplay.textContent = counter;
@@ -181,6 +180,40 @@
 
         });
 
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("add-to-cart-form");
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault(); // Evita el envío del formulario
+
+            const formData = new FormData(form);
+            const productId = formData.get("productId");
+            const quantity = formData.get("quantity");
+            const userId = "{{user._id}}"; // Asegúrate de que esta variable esté disponible
+
+            fetch(`/api/carts/${userId}/cart`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ productId, quantity }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Aquí puedes mostrar un mensaje en la misma página
+
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Error to add product',
+                    });
+                });
+        });
     });
 
 </script>

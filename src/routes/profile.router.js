@@ -7,6 +7,7 @@ import productController from '../controllers/product.controller.js';
 import EErrors from '../tools/EErrors.js';
 import CustomErrors from '../tools/CustomErrors.js';
 import { ProductErrorInfo, DatabaseErrorInfo } from '../tools/EErrorInfo.js';
+import { productService } from '../services/index.js';
 
 
 const profileRouters = Router();
@@ -91,7 +92,7 @@ profileRouters.get('/products/:pid', async (req, res) => {
 
 
     try {
-        const product = await productController.getProductById(pid);
+        const product = await productService.getById(pid);
         const { user } = req.session;
         delete user.password;
 

@@ -92,3 +92,19 @@ socket.on('deleteResult', (result) => {
     }
   });
   
+
+  socket.on('createdResoult', (result) => {
+    if (result.success) {
+      Swal.fire(
+        'Success',
+        result.message,
+        'success'
+      )
+    } else {
+      Swal.fire(
+        'Error',
+        result.message,
+        'error'
+      )
+    }
+  });

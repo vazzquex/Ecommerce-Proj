@@ -7,15 +7,19 @@ import handlebars from 'express-handlebars';
 import exphbs from 'express-handlebars';
 import Handlebars from 'handlebars';
 
+import swaggerJsDocs from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+import cors from 'cors';
+
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import cookieParser from 'cookie-parser';
 
 import productController from './controllers/product.controller.js';
 
-
 //middleware
-import { isAdmin } from './middleware/auth.middleware.js';
+import { isAdmin, isAuth } from './middleware/auth.middleware.js';
 import { loggerMiddleware } from './middleware/logger.middleware.js';
 
 //passport
@@ -39,8 +43,10 @@ import usersRouter from './routes/user.router.js';
 import profileRouters from './routes/profile.router.js';
 import mockingRouters from './routes/mocking.router.js';
 import loggerTest from './routes/logger.test.router.js';
-
+import documentationRouter from './routes/documentation.router.js';
 import restoreRouter from './routes/restore.router.js';
+
+import adminConsoleRouter from './routes/admin.console.js';
 
 // Config
 import config from './tools/config.js';
@@ -48,6 +54,13 @@ import mailingRoutes from './routes/mailing.js';
 
 const app = express();
 const port = 8080;
+
+const corsOptions = {
+	origin: 'http://localhost:8080',  // Reemplaza con la IP y puerto de tu servidor
+	optionsSuccessStatus: 204,
+  };
+
+//app.use(cors(corsOptions));
 
 app.use(loggerMiddleware);
 
@@ -70,6 +83,20 @@ Handlebars.registerHelper('eq', function (a, b) {
 app.engine('handlebars', handlebars.engine());
 app.set('views', './src/views');
 app.set('view engine', 'handlebars');
+
+// Swagger Options for API
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'CoderShop API',
+            version: '1.0.0',
+            description: 'CoderShop API documentation'
+        }
+    },
+    apis: ['./docs/**/*.yaml']
+}
+const spects = swaggerJsDocs(swaggerOptions)
 
 
 //Coockies
@@ -101,24 +128,14 @@ try {
 
 incializePassport();
 
-// app.use((req, res, next) => {
-// 	req.user = { rol: 'premium' }; // Valor ficticio
-// 	next();
-//   });
-
-
-
-
+app.use('/docs', isAdmin,swaggerUi.serve, swaggerUi.setup(spects))
 app.use("/", profileRouters);
 
 // api
-app.use('/api/sessions', sessionsRouter);
-
-app.use("/api/users", usersRouter)
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
-
-//app.use(express.static('public'));
+app.use("/api/sessions", sessionsRouter);		
+app.use("/api/users", usersRouter)				
+app.use("/api/products", productsRouter);		
+app.use("/api/carts", cartsRouter);				
 
 //insert product data
 
@@ -141,8 +158,9 @@ app.use('/realTimeProducts', realTimeProductsRouter(socketServer));
 app.use("/chat", chatRouter(socketServer));
 app.use("/mockingproducts", mockingRouters);
 app.use("/loggerTest", loggerTest)
-
+app.use("/documentation", documentationRouter)
 app.use("/restore", restoreRouter)
+app.use("/admin-console", isAdmin, adminConsoleRouter)
 
 //mailing
 app.use('/api/sending', mailingRoutes)

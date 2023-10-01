@@ -1,0 +1,242 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .text-center {
+        margin-top: 100px;
+        text-align: center;
+    }
+
+    .user-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .user-box {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transition: box-shadow 0.3s;
+        max-width: 600px;
+        text-align: center;
+    }
+
+    .user-box:hover {
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .user {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .btn-container {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    .btn-delete,
+    .btn-change-role {
+        color: white;
+        border: none;
+    }
+
+    .btn-delete {
+        background-color: #ff4444;
+        margin-right: 10px;
+    }
+
+    .btn-change-role {
+        background-color: #33b5e5;
+    }
+</style>
+
+<div class="text-center">
+    <h1>{{ title }}</h1>
+    <div class="mb-2">
+        <button type="button" class="btn btn-delete btn-delete-inactive btn-lg">Delete Inactive Users</button>
+    </div>
+</div>
+
+<div class="user-container">
+    {{#each allUsers}}
+    <div class="user-box">
+        <h4 class="user-name mb-4">User Name: {{ this.first_name }} {{ this.last_name }}</h4>
+        <h4 class="user-email user">User Email: {{ this.email }}</h4>
+        <h4 class="user-rol user">User Role: {{ this.rol }}</h4>
+        <h4 class="user-last-connection user mt-4">Last Connection: {{ this.last_connection }}</h4>
+
+        <div class="btn-container">
+            <button class="btn btn-delete delete-user" data-user-id="{{this._id}}">Delete</button>
+            <button class="btn btn-change-role" data-user-rol="{{this.rol}}" data-user-id="{{ this._id }}">Change
+                Role</button>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    // Event listener for change role buttons
+    document.querySelectorAll(".btn-change-role").forEach((button, index) => {
+        button.addEventListener("click", async (event) => {
+
+            event.preventDefault();
+            const userId = button.getAttribute("data-user-id");
+            const userRol = button.getAttribute("data-user-rol");
+
+            const { value: rol } = await Swal.fire({
+                title: 'Select field validation',
+                input: 'select',
+                inputOptions: {
+                    'Rols': {
+                        user: 'User',
+                        premium: 'Premium',
+
+                    },
+                },
+                inputPlaceholder: 'Select a rol',
+                showCancelButton: true,
+
+                inputValidator: (value) => {
+                    return new Promise((resolve) => {
+
+                        if (userRol == value) {
+                            resolve("The user already has that role");
+                        } else {
+                            resolve()
+                        }
+                    })
+                }
+            })
+
+            if (rol) {
+
+                Swal.fire({
+                    title: `Change User Role to ${rol}`,
+                    text: "Are you sure you want to change the user's role?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "No",
+                })
+                    .then(async (result) => {
+                        if (result.isConfirmed) {
+
+                            try {
+
+                                await fetch(`/api/users/premium/${userId}`, {
+                                    method: "POST"
+                                }).then(
+                                    Swal.fire({
+                                        title: "User role changed",
+                                        text: `The user's role has been changed correctly to ${rol}`,
+                                        icon: "success"
+                                    }).then(() => {
+                                        window.location.reload()
+                                    })
+                                )
+
+
+                            } catch (err) {
+                                console.error("Error: ", err)
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Something went wrong!', err,
+                                })
+                            }
+
+
+                        }
+                    })
+
+            }
+        });
+    });
+
+    document.querySelectorAll(".btn-delete-inactive").forEach((button, index) => {
+        button.addEventListener("click", () => {
+            Swal.fire({
+                title: "Delete Inactive Users",
+                text: "Are you sure you want to delete inactive usesrs?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete",
+                cancelButtonText: "No, cancel",
+                dangerMode: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    fetch("/api/users/", {
+                        method: "DELETE",
+                    }).then((response) => {
+                        if (response.ok) {
+                            Swal.fire("Users Deleted!", "Inactive Users has been Deleted!", "success");
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            });
+                        }
+                    });
+
+                } else if (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    })
+                }
+            });
+        });
+    });
+
+    // Event listener for delete buttons
+    document.querySelectorAll(".delete-user").forEach((button, index) => {
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            const userId = button.getAttribute("data-user-id");
+            const userRol = button.getAttribute("data-user-rol");
+
+            Swal.fire({
+                title: "Delete User",
+                text: "Are you sure you want to delete this user and their email?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete",
+                cancelButtonText: "No, cancel",
+                dangerMode: true,
+            }).then((response) => {
+                if (response.isConfirmed) {
+
+                    fetch(`/api/users/${userId}`, {
+                        method: "DELETE",
+                    }).then((response) => {
+                        if (response.ok) {
+                            button.closest(".user-box").remove();
+                            Swal.fire("User Deleted!", "The user and their email have been deleted.", "success");
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong!',
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

@@ -1,8 +1,14 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-	first_name: String,
-	last_name: String,
+	first_name: {
+		type: String,
+		required: true,
+	},
+	last_name: {
+		type: String,
+		//required: true,
+	},
 	email: {
 		type: String,
 		unique: true,
@@ -19,10 +25,22 @@ const userSchema = new mongoose.Schema({
 		ref: 'products' },
 		quantity: Number
 	}],
-	password: String,
+	password: {
+		type: String,
+		//required: true,
+	},
 	img: {
 		default: "https://www.carsaludable.com.ar/wp-content/uploads/2014/03/default-placeholder.png",
 		type: String
+	},
+
+	documents: [{
+		name: String,
+		reference: String,
+	}],
+
+	last_connection: {
+		type: Date,
 	},
 
 	resetPasswordToken: String,

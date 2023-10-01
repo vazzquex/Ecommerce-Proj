@@ -1,6 +1,20 @@
 import userModel from '../DAOs/models/user.model.js';
+import BaseRepository from './base.repository.js';
 
-export default class UserRepository {
+export default class UserRepository extends BaseRepository {
+    constructor(dao) {
+        super(dao);
+    }
+
+    async getInactiveUsers(){
+        return await userModel.find({}, {_id: 1, last_connection: 1})
+    }
+
+    async createUser(userData) {
+        return await userModel.create(userData);
+    }
+
+
     async findById(userId) {
         return await userModel.findById(userId).populate('cart.productId').lean();
     }
@@ -10,19 +24,19 @@ export default class UserRepository {
         return await user.save();
     }
 
-    async findTokenAndExpiraton (token) {
+    async deleteUserById(uid) {
+        return await userModel.deleteOne({ _id: uid });
+    }
+
+    async findTokenAndExpiraton(token) {
         return await userModel.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } })
     }
 
     async updateRolToPremium(uid) {
-        return await userModel.updateOne({ _id: uid }, { $set: { rol: 'premium' }});
+        return await userModel.updateOne({ _id: uid }, { $set: { rol: 'premium' } });
     }
-    async updateRolToUser (uid) {
-        return await userModel.updateOne({ _id: uid }, { $set: { rol: 'user' }});
-    } 
-
-    async getAll() {
-        return await userModel.find();
+    async updateRolToUser(uid) {
+        return await userModel.updateOne({ _id: uid }, { $set: { rol: 'user' } });
     }
 
     async getCartUser(userId) {
@@ -33,15 +47,13 @@ export default class UserRepository {
         return await userModel.findOne({ email: email });
     }
 
-    async createUser(userData) {
-        return await userModel.create(userData);
-    }
-
     async getById(id) {
         return await userModel.findById(id);
     }
 
-    async getByAge(age) {
-        return await userModel.findOne({ age: age });
+    async getAllUsers(){
+        return await userModel.find().select('first_name').select('last_name').select('email').select('rol').select('last_connection').lean();
     }
+
+
 }

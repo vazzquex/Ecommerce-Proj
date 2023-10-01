@@ -2,14 +2,12 @@ import { Router } from 'express';
 import nodemailer from 'nodemailer';
 import twilio from 'twilio';
 
-import userService from '../services/user.service.js';
-import ticketService from '../services/tickets.service.js';
+import { userService, ticketService, productService } from "../services/index.js";
 import TicketDTO from '../DTOs/TicketsDto.js'
 
-
 import 'dotenv/config'
-import productService from '../services/products.service.js';
-import { productRepository, userRepository } from '../repositories/index.js';
+import productModel from '../DAOs/models/products.model.js';
+import mailingController from '../controllers/mailing.controller.js';
 
 //twilio info
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID
@@ -21,6 +19,8 @@ const email_pass = process.env.EMAIL_PASS
 
 const mailingRoutes = Router();
 
+mailingRoutes.post("/mail/delete-inactive-accounts", mailingController.deleteUserInactiveMail)
+mailingRoutes.post("/mail/delete-product", mailingController.deleteProductMail)
 
 
 mailingRoutes.post("/mail", async (req, res) => {
@@ -28,7 +28,7 @@ mailingRoutes.post("/mail", async (req, res) => {
     const { userEmail, products, total } = req.body;
     let productListHTML = '';
 
-    const user = await userRepository.getByEmail(userEmail);
+    const user = await userService.getByEmail(userEmail);
 
     req.logger.info("Getting user Email")
 
@@ -52,7 +52,7 @@ mailingRoutes.post("/mail", async (req, res) => {
         subtotalTotal += productSubtotal; // Suma al subtotal acumulado
 
         // encontrar producto en db
-        let dbproduct = await productRepository.getById(id)
+        let dbproduct = await productModel.findById(id)
 
 
         if (!dbproduct) {
@@ -83,8 +83,8 @@ mailingRoutes.post("/mail", async (req, res) => {
 
         // Guarda el producto
 
-        // dbproduct.markModified('stock');
-        // dbproduct.markModified('status');
+        //dbproduct.markModified('stock');
+        //dbproduct.markModified('status');
         await dbproduct.save();
 
 
@@ -143,16 +143,7 @@ mailingRoutes.post("/mail", async (req, res) => {
         subject: 'Shopping Coder',
         html: emailHTML, // Aquí agregamos el HTML completo del correo electrónico.
 
-        //attachments: []
     });
-
-    // trasport.sendMail(mailOptions, (error, info) => {
-    //     if (error) {
-    //         console.error(error);
-    //         res.send('No se puedo enviar el correo electrónico' + error);
-    //     }
-    //     console.log('Correo electrónico enviado: ' + info.response);
-    // });
 
     req.logger.debug("Correo Enviado")
     res.status(201).json(`The details of the purchase have been sent to:  ${userEmail}`);

@@ -1,4 +1,9 @@
 node_modules
-test
 
 .env
+
+errors.log
+
+/src/data/documents/*
+/src/data/profiles/*
+/src/data/products/*

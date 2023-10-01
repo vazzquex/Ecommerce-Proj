@@ -1,8 +1,7 @@
 import passport from 'passport';
 import GitHubStrategy from 'passport-github2';
-import userServices from '../services/user.service.js';
+import { userService } from '../services/index.js';
 import config from '../tools/config.js';
-import { userRepository } from '../repositories/index.js';
 
 const clientID = config.clientId;
 const clientSecret = config.clientSecret;
@@ -21,7 +20,7 @@ const incializePassport = () => {
 			async (accessToken, refreshToken, profile, done) => {
 				try {
 					//console.log(profile);
-					let user = await userRepository.getByEmail(
+					let user = await userService.getByEmail(
 						profile._json.email
 					);
 
@@ -33,7 +32,7 @@ const incializePassport = () => {
 							password: '',
 							img: profile._json.avatar_url,
 						};
-						user = await userRepository.createUser(newUser);
+						user = await userService.createUser(newUser);
 
 						done(null, user);
 					} else {
@@ -51,7 +50,7 @@ const incializePassport = () => {
 	});
 
 	passport.deserializeUser(async (id, done) => {
-		const user = await userServices.getById(id);
+		const user = await userService.getById(id);
 		done(null, user);
 	});
 };
