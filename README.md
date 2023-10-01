@@ -1,23 +1,10 @@
 ## Actualizaciones y Mejoras
 
-### 1. Sistema de Recuperación de Contraseña
-Permite a los usuarios restablecer su contraseña mediante un enlace enviado por correo electrónico. El enlace expira después de 1 hora y no permite restablecer la contraseña con la misma actual. Si el enlace ha expirado, redirige a una vista que permite generar un nuevo correo de restablecimiento.
+### 1. Sistema de Envio de Correos
+Cuando se elimina a un usuario ya sea por inactividad o tambien se elimina el producto de un usuario, este es notificado por email
 
-### 2. Nuevo Rol "Premium"
-Se ha establecido un rol premium que tiene la capacidad de crear productos.
-
-### 3. Modificación del Schema de Producto
-Se añadió un campo "owner" para identificar al creador del producto. Si se crea un producto sin propietario, el valor por defecto es "admin". Solo los usuarios premium pueden ser asignados como propietarios.
-
-### 4. Permisos de Modificación y Eliminación de Productos
-Los usuarios premium solo pueden eliminar productos que les pertenecen, mientras que los administradores pueden eliminar cualquier producto.
-
-### 5. Lógica de Carrito Modificada
-Los usuarios premium no pueden agregar a su carrito un producto que les pertenezca.
-
-### 6. Ruta para Cambiar el Rol de Usuario
-Se implementó una nueva ruta en el router de api/users, específicamente `/api/users/premium/:uid`, que permite cambiar el rol de un usuario de "user" a "premium" y viceversa.
-
+### 2. Centro de control para el admin
+Ahora hay una nueva vista para el admin donde puede eliminar a usuarios o actualizar sus roles
 
 
 ## 📝 Variables de Entorno
@@ -30,6 +17,9 @@ ENVIROMENT="dev"
 
 
 MONGO_URL='mongodb://localhost:8080/test' 
+
+#Tiempo en segundos para que se elimine un usuario si pertenece inactivo
+USER_CLEANUP_INTERVAL=170000
 
 # Las siguientes variables son para la autenticación con GitHub usando Passport
 CLIENT_ID='Iv1.a1b2c3a1b2c3'
