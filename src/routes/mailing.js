@@ -21,7 +21,7 @@ const mailingRoutes = Router();
 
 mailingRoutes.post("/mail/delete-inactive-accounts", mailingController.deleteUserInactiveMail)
 mailingRoutes.post("/mail/delete-account", mailingController.deleteAccountMail)
-mailingRoutes.post("/mail/delete-product", mailingController.deleteProductMail)
+mailingRoutes.post("/mail/delete-product/:pid", mailingController.deleteProductMail)
 
 
 mailingRoutes.post("/mail", async (req, res) => {
