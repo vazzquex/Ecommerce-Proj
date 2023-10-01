@@ -99,12 +99,20 @@
                         }).then(() => {
                             window.location.href = "/";
                         })
+                    } else if (response.status === 400) {
+                        response.json().then(data => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error processing purchase',
+                                text: data.message 
+                            });
+                        });
                     } else {
                         // Si la solicitud falla, muestra una Sweet Alert de error
                         Swal.fire({
                             icon: "error",
                             title: "Error",
-                            text: "Hubo un error al procesar su compra. Por favor, inténtelo de nuevo más tarde.",
+                            text: "There was an error processing your purchase. Please try again later..",
                         });
                     }
                 })

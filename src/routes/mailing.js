@@ -38,6 +38,12 @@ mailingRoutes.post("/mail", async (req, res) => {
         return res.status(404).json({ error: "User not found" });
     }
 
+
+    if(!products){
+        req.logger.error("There are no products");
+        return res.status(400).json({ message: "You need to have products in the cart to complete the purchase"})
+    }
+
     let subtotalTotal = 0;
 
     for (const product of products) {
