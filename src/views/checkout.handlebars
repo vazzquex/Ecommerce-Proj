@@ -32,20 +32,19 @@
 
 
 
-
-
     <div class="col d-flex justify-content-center">
         <div class="d-flex flex-column justify-content-center align-items-center">
 
 
-            <form action="/api/sending/mail" method="post">
+            <form id="formPurchase" action="/api/sending/mail" method="post">
 
                 <input type="hidden" name="userEmail" value="{{user.email}}">
 
                 {{#each products}}
                 <input type="hidden" name="products[{{@index}}][productId][id]" value="{{this.productId._id}}">
                 <input type="hidden" name="products[{{@index}}][productId][title]" value="{{this.productId.title}}">
-                <input type="hidden" name="products[{{@index}}][productId][description]" value="{{this.productId.description}}">
+                <input type="hidden" name="products[{{@index}}][productId][description]"
+                    value="{{this.productId.description}}">
                 <input type="hidden" name="products[{{@index}}][quantity]" value="{{this.quantity}}">
                 <input type="hidden" name="products[{{@index}}][productId][price]" value="{{this.productId.price}}">
                 <input type="hidden" name="products[{{@index}}][subtotal]" value="{{this.subtotal}}">
@@ -54,15 +53,68 @@
 
                 <input type="hidden" name="total" value="{{total}}">
 
-                <button type="submit" class="btn btn-primary btn-lg mt-5" style="width: 350px;">Confirm
+                <button id="confirmButton" class="btn btn-primary btn-lg mt-5" style="width: 350px;">Confirm
                     Purchase</button>
+
             </form>
-
-
-
         </div>
     </div>
-
-
-
 </section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Captura el formulario
+        const form = document.querySelector("#formPurchase");
+
+        // Captura el botón de confirmación
+        const confirmButton = document.getElementById("confirmButton");
+
+        // Agrega un evento de clic al botón de confirmación
+        confirmButton.addEventListener("click", function (event) {
+            // Previene el envío del formulario por defecto
+            event.preventDefault();
+
+            // Deshabilita el botón mientras se procesa la solicitud
+            confirmButton.disabled = true;
+
+            // Realiza la solicitud AJAX (aquí deberías enviar los datos del formulario)
+            console.log(form)
+
+            fetch("/api/sending/mail", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded', // Cambia el tipo de contenido a form-urlencoded
+                },
+                body: new URLSearchParams(new FormData(form)), // Convierte FormData a URLSearchParams
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        // Si la solicitud es exitosa, muestra una Sweet Alert de éxito
+                        Swal.fire({
+                            icon: "success",
+                            title: "Confirmed purchase!",
+                            text: "¡Your purchase was confirmed, the details will be sent to the email!",
+                        }).then(() => {
+                            window.location.href = "/";
+                        })
+                    } else {
+                        // Si la solicitud falla, muestra una Sweet Alert de error
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: "Hubo un error al procesar su compra. Por favor, inténtelo de nuevo más tarde.",
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al procesar la solicitud:", error);
+                })
+                .finally(() => {
+                    // Habilita el botón nuevamente después de que se complete la solicitud
+                    confirmButton.disabled = false;
+                });
+        });
+    });
+</script>
