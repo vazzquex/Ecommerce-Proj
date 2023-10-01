@@ -13,6 +13,10 @@ export default class ProductRepository extends BaseRepository {
         return await user.save();
     }
 
+    async deleteById(id) {
+        return await productModel.deleteOne({_id: id}).lean();
+    }
+
     async getById(id) {
         return await productModel.findOne({ _id: id }).lean();
     }

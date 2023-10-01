@@ -50,9 +50,6 @@ const deleteUserInactiveMail = async (req, res) => {
                     await dbproduct.save();
 
                     productListHTML += `
-                <h1 class="text-center">Product Detail</h1>
-                <hr>
-                <h3>Products removed from your account</h3>
                     <div id="order-details">
                         <div class="row mb-3">   
                             <div class="col-md-6">
@@ -73,6 +70,9 @@ const deleteUserInactiveMail = async (req, res) => {
             <h1>Your account has been deleted due to inactivity!</h1>
             <hr>
             <section id="order-confirmation" class="container mt-5">
+                    <h1 class="text-center">Product Detail</h1>
+                    <hr>
+                    <h3>Products removed from your account</h3>
                     ${productListHTML}
             </section>
         `;
@@ -101,65 +101,72 @@ const deleteUserInactiveMail = async (req, res) => {
 
 
 const deleteProductMail = async (req, res) => {
+    const { userEmail, products } = req.body;
+
+
     try {
-        const { userEmail, products } = req.body;
+
         let productListHTML = '';
 
         const user = await userService.getByEmail(userEmail);
-        req.logger.info("Getting user Email")
+        req.logger.info("Get user Email")
 
         if (!user) {
             req.logger.error(`User ${userEmail} does not exist`);
             return res.status(404).json({ error: "User not found" });
         }
 
-        for (const product of products) {
-            const id = product.productId.id;
-            const title = product.productId.title;
-            const description = product.productId.description
+        if (products) {
+            req.logger.debug("Hay producto")
+            req.logger.debug(JSON.stringify(products))
 
-            // encontrar producto en db
-            let dbproduct = await productModel.findById(id)
 
-            if (!dbproduct) {
-                req.logger.error(`Product with ID ${id} not found)`);
-                return res.status(404).json({ error: `Product with ID ${id} not found.` });
-            } else {
-                req.logger.debug(`Product with ID ${id} is found`);
+            for (const product of products) {
 
-                req.logger.debug("Deleting product...");
-                await productController.deleteProductById(id)
-                req.logger.debug("Product delete")
-            }
+                const id = product.id ?? "";
+                const title = product.title ?? "";
+                const description = product.description ?? "";
 
-            // Guarda el producto
-            await dbproduct.save();
+                // encontrar producto en db
+                let dbproduct = await productService.getById(id)
 
-            productListHTML += `
-                <div class="row mb-3">   
-                    <div class="col-md-6">
-                        <h5>${title}</h5>
-                        <p>${description}</p>
+                if (!dbproduct) {
+                    req.logger.error(`Product with ID ${id} not found)`);
+                    return res.status(404).json({ error: `Product with ID ${id} not found.` });
+                } else {
+                    req.logger.debug(`Product with ID ${id} is found`);
+                    req.logger.debug("Deleting product...");
+                    //await productService.deleteById(id)
+                    req.logger.debug("Product delete")
+                }
+
+                productListHTML += `
+                    <div id="order-details">
+                        <div class="row mb-3">   
+                            <div class="col-md-6">
+                                <h5>${title}</h5>
+                                <p>${description}</p>
+                            </div>
+                            <hr>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
 
         // Generar el HTML completo del correo electrónico.
         const emailHTML = `
-            <h1>Your product has been removed!</h1>
+            <h1>Your product has been deleted!</h1>
             <hr>
             <section id="order-confirmation" class="container mt-5">
-                <h1 class="text-center">Product Detail</h1>
-                <hr>
-                <div id="order-details">
-                    ${productListHTML}
+                    <h1 class="text-center">Product Detail</h1>
                     <hr>
-                </div>
+                    <h3>Products removed from your account</h3>
+                    ${productListHTML}
             </section>
         `;
 
-
+        req.logger.debug("Sending email...")
         let mailOptions = await trasport.sendMail({
             from: `Coder Test <${email}>`,
             to: userEmail,
@@ -167,12 +174,11 @@ const deleteProductMail = async (req, res) => {
             html: emailHTML,
         });
 
-        req.logger.debug("Correo Enviado")
-        res.status(201).json(`The details of the deleted product have been sent to:  ${userEmail}`);
-
+        req.logger.debug(`Correo enviado a ${userEmail}`)
+        res.status(201).json(`The product deleted has been sending to:  ${userEmail}`);
     } catch (err) {
-        req.logger.error("Error to send deleted product email");
-        res.send(500).json({ message: "Error to send deleted product email", err })
+        req.logger.error("Error to send product deleted email");
+        res.send(500).json({ message: "Error to send product deleted email", err })
     }
 }
 
