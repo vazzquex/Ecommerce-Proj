@@ -17,6 +17,10 @@ export default class ProductRepository extends BaseRepository {
         return await productModel.deleteOne({_id: id}).lean();
     }
 
+    async getProductsUserByEmail(email){
+        return await productModel.find({ owner: email}).select("title").select("description")
+    }
+
     async getById(id) {
         return await productModel.findOne({ _id: id }).lean();
     }

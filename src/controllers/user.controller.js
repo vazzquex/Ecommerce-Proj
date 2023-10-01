@@ -207,6 +207,8 @@ const getAllUsers = async (req, res) => {
 const deleteInactiveUsers = async (req, res) => {
     const userCleanupIntervalInSeconds = process.env.USER_CLEANUP_INTERVAL;
     let countUserDeleted = 0;
+    let deletedUserEmails = [];
+
 
     try {
         const inactiveUser = await userService.getInactiveUsers();
@@ -219,10 +221,11 @@ const deleteInactiveUsers = async (req, res) => {
             const timeDifferenceInSeconds = (actualDate - userLastConnectionDate) / 1000;
             if (timeDifferenceInSeconds > userCleanupIntervalInSeconds) {
                 await userService.deleteUserById(user._id);
+
+                deletedUserEmails.push(user.email);
                 req.logger.debug(`The user ${user._id} was deleted because it has been inactive for more than ${userCleanupIntervalInSeconds} seconds.`);
                 countUserDeleted++;
             }
-
         }
 
         res.status(200).json({ message: `Deleted inactivity users: ${countUserDeleted}` });

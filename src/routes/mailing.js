@@ -20,6 +20,7 @@ const email_pass = process.env.EMAIL_PASS
 const mailingRoutes = Router();
 
 mailingRoutes.post("/mail/delete-inactive-accounts", mailingController.deleteUserInactiveMail)
+mailingRoutes.post("/mail/delete-account", mailingController.deleteAccountMail)
 mailingRoutes.post("/mail/delete-product", mailingController.deleteProductMail)
 
 

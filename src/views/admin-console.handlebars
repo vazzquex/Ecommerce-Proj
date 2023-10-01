@@ -76,7 +76,8 @@
         <h4 class="user-last-connection user mt-4">Last Connection: {{ this.last_connection }}</h4>
 
         <div class="btn-container">
-            <button class="btn btn-delete delete-user" data-user-id="{{this._id}}">Delete</button>
+            <button class="btn btn-delete delete-user" data-user-id="{{this._id}}"
+                data-user-email={{this.email}}>Delete</button>
             <button class="btn btn-change-role" data-user-rol="{{this.rol}}" data-user-id="{{ this._id }}">Change
                 Role</button>
         </div>
@@ -156,18 +157,17 @@
                                     text: 'Something went wrong!', err,
                                 })
                             }
-
-
                         }
                     })
-
             }
         });
     });
 
     document.querySelectorAll(".btn-delete-inactive").forEach((button, index) => {
-        button.addEventListener("click", () => {
-            Swal.fire({
+        let swalLoading;
+        button.addEventListener("click", async () => {
+
+            const confirmDialog = await Swal.fire({
                 title: "Delete Inactive Users",
                 text: "Are you sure you want to delete inactive usesrs?",
                 icon: "warning",
@@ -175,21 +175,33 @@
                 confirmButtonText: "Yes, delete",
                 cancelButtonText: "No, cancel",
                 dangerMode: true,
-            }).then((result) => {
-                if (result.isConfirmed) {
+            });
 
-                    fetch("/api/users/", {
-                        method: "DELETE",
-                    }).then((response) => {
-                        if (response.ok) {
-                            Swal.fire("Users Deleted!", "Inactive Users has been Deleted!", "success");
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong!',
-                            });
-                        }
+            if (confirmDialog.isConfirmed) {
+                swalLoading = Swal.fire({
+                    title: "Please wait...",
+                    text: "Deleting inactive users...",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            }
+
+            try {
+                const response = await fetch("/api/sending/mail/delete-inactive-accounts", {
+                    method: "POST",
+                })
+
+                console.log(response)
+
+                if (response.status == 201) {
+                    swalLoading.close();
+
+                    Swal.fire("Inactive Users Deleted!", "Inactive Users has been Deleted!", "success").then((result) => {
+                        window.location.reload();
                     });
 
                 } else if (error) {
@@ -197,46 +209,88 @@
                         icon: 'error',
                         title: 'Oops...',
                         text: 'Something went wrong!',
-                    })
+                    });
                 }
-            });
+            } catch (error) {
+                console.error(error)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong catch!',
+                });
+            };
         });
     });
 
     // Event listener for delete buttons
     document.querySelectorAll(".delete-user").forEach((button, index) => {
-        button.addEventListener("click", (event) => {
+        let swalLoading;
+        button.addEventListener("click", async (event) => {
             event.preventDefault();
             const userId = button.getAttribute("data-user-id");
             const userRol = button.getAttribute("data-user-rol");
+            const userEmail = button.getAttribute("data-user-email");
 
-            Swal.fire({
+            // Abre el SweetAlert de confirmación
+            const confirmDialog = await Swal.fire({
                 title: "Delete User",
-                text: "Are you sure you want to delete this user and their email?",
+                text: "Are you sure you want to delete this user and their products?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Yes, delete",
                 cancelButtonText: "No, cancel",
                 dangerMode: true,
-            }).then((response) => {
-                if (response.isConfirmed) {
+            });
 
-                    fetch(`/api/users/${userId}`, {
-                        method: "DELETE",
-                    }).then((response) => {
-                        if (response.ok) {
-                            button.closest(".user-box").remove();
-                            Swal.fire("User Deleted!", "The user and their email have been deleted.", "success");
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong!',
-                            });
-                        }
+            if (confirmDialog.isConfirmed) {
+                swalLoading = Swal.fire({
+                    title: "Please wait...",
+                    text: "Deleting user...",
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    onBeforeOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                try {
+                    const response = await fetch("/api/sending/mail/delete-account", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            userEmail,
+                        }),
+                    });
+
+                    if (response.ok) {
+                        swalLoading.close();
+
+                        button.closest(".user-box").remove();
+
+                        Swal.fire("User Deleted!", "The user and their products have been deleted.", "success").then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
                     });
                 }
-            });
+            }
         });
     });
+
+
+
 </script>
