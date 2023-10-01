@@ -147,7 +147,7 @@
         item.addEventListener('click', event => {
             // Extrae el id del producto desde el id del elemento
             const productId = event.currentTarget.id.split('-')[1];
-            window.location.href = `http://localhost:8080/products/${productId}`;
+            window.location.href = `/products/${productId}`;
         })
     })
 </script>
