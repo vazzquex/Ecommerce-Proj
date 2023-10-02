@@ -32,7 +32,7 @@ sessionsRouter.get(
 		} else {
 			req.logger.warning('GitHub authentication failed');
 		}
-		//res.redirect('/');
+		res.redirect('/');
 	}
 );
 
