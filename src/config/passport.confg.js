@@ -15,7 +15,7 @@ const incializePassport = () => {
 				clientID: clientID,
 				clientSecret: clientSecret,
 				callbackURL:
-					'/api/sessions/githubcallback',
+					process.env.URL + '/api/sessions/githubcallback',
 			},
 			async (accessToken, refreshToken, profile, done) => {
 				try {
