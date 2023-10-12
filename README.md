@@ -1,10 +1,70 @@
-## Actualizaciones y Mejoras
+# Resumen del Proyecto
 
-### 1. Sistema de Envio de Correos
-He implementado un sistema de notificación por correo electrónico que asegura que los usuarios sean informados cuando se elimina su cuenta debido a inactividad o cuando uno de sus productos es eliminado.
+## Descripción General
 
-### 2. Centro de control para el admin
-Se añadio un nuevo panel de control solo para el admin. En este panel, tenes la capacidad de eliminar usuarios o modificar sus roles.
+Este proyecto es una plataforma de comercio electrónico completa con funcionalidades avanzadas y una arquitectura robusta. Ofrece una variedad de rutas y servicios, desde la visualización de productos hasta un chat en tiempo real y un sistema de carrito de compras. Además, se han implementado numerosas mejoras y actualizaciones para enriquecer la experiencia del usuario y fortalecer la seguridad.
+
+## Funcionalidades Clave
+
+- **Rutas Principales**: 
+  - `/productos`: Muestra todos los productos disponibles.
+  - `/chat`: Ofrece un chat en tiempo real con websockets.
+
+- **Seguridad y Privacidad**: 
+  - Implementación de middleware para ocultar información sensible.
+  - Sistema de recuperación de contraseña.
+  
+- **Roles y Permisos**: 
+  - Roles de "Admin" y "Premium" con diferentes niveles de acceso.
+  - Lógica de propiedad y permisos para productos.
+
+- **Gestión de Usuarios**: 
+  - Actualización de roles.
+  - Carga de documentos para autenticación.
+  
+- **Otros**: 
+  - Modelo de tickets y almacenamiento en MongoDB.
+  - Loggers personalizados.
+  - Pruebas automatizadas.
+  - Documentación de API con Swagger.
+
+## Mejoras Recientes
+
+### 1. Seguridad Mejorada
+- Implementación de un sistema de recuperación de contraseña.
+- Middleware para ocultar información sensible.
+
+### 2. Roles y Permisos Avanzados
+- Introducción del rol "Premium".
+- Permisos de modificación y eliminación de productos.
+
+### 3. Optimización del Carrito
+- Lógica de carrito modificada para usuarios premium.
+
+### 4. Gestión de Usuarios Mejorada
+- Ruta para cambiar roles.
+- Propiedad "last_connection" para rastrear la actividad del usuario.
+
+### 5. Documentación y Pruebas
+- Documentación de API con Swagger.
+- Módulos de pruebas para diversas funcionalidades.
+
+### 6. Logging y Monitoreo
+- Implementación de loggers personalizados con Winston.
+
+### 7. Errores Personalizados
+- Incorporación de errores personalizados en varios routers.
+
+### 8. Mejoras en la Estructura del Proyecto
+- Optimización de la gestión de carpetas y uso de variables de entorno.
+
+### 9. Sistema de Envio de Correos
+- He implementado un sistema de notificación por correo electrónico que asegura que los usuarios sean informados cuando se elimina su cuenta debido a inactividad o cuando uno de sus productos es eliminado.
+
+### 10. Centro de control para el admin
+- Se añadió un nuevo panel de control solo para el admin. En este panel, tienes la capacidad de eliminar usuarios o modificar sus roles.
+
+Este proyecto no solo se centra en proporcionar funcionalidades, sino que también pone un fuerte énfasis en la seguridad, la eficiencia y la escalabilidad. Con cada entrega, se busca mejorar y optimizar aún más la plataforma, manteniendo las mejores prácticas y patrones de diseño modernos.
 
 
 ![Screenshot from 2023-10-12 20-05-02](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/56deff02-ba3a-42a5-9c33-0ba23864af3e)
