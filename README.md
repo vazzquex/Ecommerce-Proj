@@ -6,6 +6,15 @@ He implementado un sistema de notificación por correo electrónico que asegura 
 ### 2. Centro de control para el admin
 Se añadio un nuevo panel de control solo para el admin. En este panel, tenes la capacidad de eliminar usuarios o modificar sus roles.
 
+
+![Screenshot from 2023-10-12 20-05-02](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/56deff02-ba3a-42a5-9c33-0ba23864af3e)
+![Screenshot from 2023-10-12 20-05-38](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/65fb2117-50da-4918-abdd-c0b93ae77685)
+![Screenshot from 2023-10-12 20-05-46](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/e39464c8-641b-44c7-b612-514dbc738c21)
+![Screenshot from 2023-10-12 20-05-49](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/d9f68dc5-440a-4331-add9-0b0c892af661)
+![Screenshot from 2023-10-12 20-06-05](https://github.com/vazzquex/Ecommerce-Proj/assets/108772623/cfb9cfe9-5291-46cd-8135-3423272be4d4)
+
+
+
 ## 📝 Variables de Entorno
 
 Archivo ejemplo del `.env` contiene:
